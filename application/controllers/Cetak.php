@@ -14,7 +14,7 @@ class Cetak extends ThirdParty{
 		$this->Cell(75,4,ucfirst($data),0,0,'L');
 		$this->SetXY(60,$y);
 		$this->Cell(75,4,':',0,0,'L');
-		$this->SetXY(195,$y);
+		$this->SetXY(194,$y);
 		$this->Cell(75,4,':',0,0,'L');
 	}
 	public function header_loop_vertical($x=0,$y=0,$counter=0,$data=array()){
