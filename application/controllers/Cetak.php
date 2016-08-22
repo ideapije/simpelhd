@@ -69,79 +69,89 @@ class Cetak extends ThirdParty{
 		$this->AddPage();
 		$this->kk_header();
 		$this->kk_konten_satu();
-		$this->kk_konten_isi_vertikal_loop(44,6,array('nama_lengkap','NIK','jenis_kelamin','lahir_tempat','lahir_tanggal','agama','pendidikan_terakhir','pekerjaan','no'));
+		$this->kk_header2();
+		$this->kk_konten_isi_vertikal_loop(61,6,array('nama_lengkap','NIK','jenis_kelamin','lahir_tempat','lahir_tanggal','agama','pendidikan_terakhir','pekerjaan','no'));
+		$this->logo_pancasila();
 		$this->kk_konten_dua();
-		$this->kk_konten_isi_vertikal_loop(114,6,array('status_perkawinan','status_keluarga'),'kk_konten_dua_isi');
+		$this->kk_konten_isi_vertikal_loop(96,6,array('status_perkawinan','status_keluarga'),'kk_konten_dua_isi');
 		$this->Output();
 	}
 	public function kk_header()
 	{
-		$this->SetFont('Arial','B',20);
-		$this->SetXY(100,5);
-		$this->Cell(100,10,'Kartu Keluarga',0,0,'C');
+		$this->SetFont('Arial','B',30);
+		$this->SetXY(100,10);
+		$this->Cell(100,15,'Kartu Keluarga',0,0,'C');
+		$this->kk_baris_satu();
+	}
+	public function kk_header2()
+	{
+		$this->SetFont('Arial','B',15);
+		$this->SetXY(100,22);
+		$this->Cell(100,7,'No.3201060401130027',0,0,'C');
 		$this->kk_baris_satu();
 	}
 	public function kk_baris_satu(){
-		$this->SetFont('Arial','',12);
+		$this->SetFont('Arial','',8);
 		$this->kk_header_kiri();
 		$this->kk_header_kiri_isi();
 		$this->kk_header_kanan();
 		$this->kk_header_kanan_isi();
 	}
 	public function kk_header_kiri(){
-		$this->header_loop_vertical(15,15,5,$this->ci->labels->kk_header('kiri'));
+		$this->header_loop_vertical(15,30,5,$this->ci->labels->kk_header('kiri'));
 	}
 	public function kk_header_kiri_isi(){
 		if (!is_null($this->data)) {
-			$this->header_loop_vertical(63,15,5,$this->get_isikkheader_kiri());
+			$this->header_loop_vertical(63,30,5,$this->get_isikkheader_kiri());
 		}
 	}
 	public function kk_header_kanan(){
-		$this->header_loop_vertical(160,15,5,$this->ci->labels->kk_header('kanan'));	
+		$this->header_loop_vertical(160,30,5,$this->ci->labels->kk_header('kanan'));	
 	}
 	public function kk_header_kanan_isi(){
-		$this->header_loop_vertical(198,15,5,$this->get_isikkheader_kanan());		
+		$this->header_loop_vertical(198,30,5,$this->get_isikkheader_kanan());		
 	}
+	
 	public function kk_konten_satu(){
-		$this->SetFont('Arial','',10);
-		$this->SetXY(17,38);
+		$this->SetFont('Arial','',7);
+		$this->SetXY(17,55);
 		$this->Cell(15,6,'No',1,0,'C');
-		$this->SetXY(32,38);
+		$this->SetXY(32,55);
 		$this->Cell(50,6,'Nama Lengkap',1,0,'C');
-		$this->SetXY(82,38);
+		$this->SetXY(82,55);
 		$this->Cell(30,6,'NIK',1,0,'C');
-		$this->SetXY(112,38);
+		$this->SetXY(112,55);
 		$this->SetFont('Arial','',8);
 		$this->MultiCell(16,3,'jenis Kelamin',1,'C',0);
-		$this->SetFont('Arial','',10);
-		$this->SetXY(128,38);
+		$this->SetFont('Arial','',8);
+		$this->SetXY(128,55);
 		$this->Cell(40,6,'Tempat Lahir',1,0,'C');
-		$this->SetXY(168,38);
+		$this->SetXY(168,55);
 		$this->MultiCell(16,3,'Tanggal Lahir',1,'C',0);
-		$this->SetXY(184,38);
+		$this->SetXY(184,55);
 		$this->Cell(30,6,'AGAMA',1,0,'C');
-		$this->SetXY(214,38);
+		$this->SetXY(214,55);
 		$this->Cell(30,6,'Pendidikan',1,0,'C');
-		$this->SetXY(244,38);
+		$this->SetXY(244,55);
 		$this->Cell(30,6,'Jenis Pekerjaan',1,0,'C');
 	}
 	public function kk_konten_satu_isi($nilai_y=0,$counter=0,$data=array()){
-		$this->SetFont('Arial','',10);
+		$this->SetFont('Arial','',7);
 		$no 		= (isset($data['no']))? $data['no'] : '';		
 		$this->SetXY(17,$nilai_y);
 		$this->Cell(15,6,$no,1,0,'C');
 
 		$fullname	= (isset($data['nama_lengkap']))? $data['nama_lengkap'] : '';
 		$this->SetXY(32,$nilai_y);
-		$this->Cell(50,6,$fullname,1,0,'L');
+		$this->Cell(50,6,$fullname,1,0,'C');
 
 		$nik 		= (isset($data['NIK']))? $data['NIK'] : '';
 		$this->SetXY(82,$nilai_y);
-		$this->Cell(30,6,$nik,1,0,'L');
+		$this->Cell(30,6,$nik,1,0,'C');
 
 		$gender 	= (isset($data['jenis_kelamin']))? GetGender($data['jenis_kelamin']) : '';
 		$this->SetXY(112,$nilai_y);
-		$this->Cell(16,6,$gender,1,0,'L');
+		$this->Cell(16,6,$gender,1,0,'C');
 
 		$birthplace= (isset($data['lahir_tempat']))? $data['lahir_tempat'] : '';
 		$this->SetXY(128,$nilai_y);
@@ -153,11 +163,11 @@ class Cetak extends ThirdParty{
 		
 		$agama 		= (isset($data['agama']))? GetAgama($data['agama']) : '';
 		$this->SetXY(184,$nilai_y);
-		$this->Cell(30,6,$agama,1,0,'L');
+		$this->Cell(30,6,$agama,1,0,'C');
 		
 		$edu		= (isset($data['pendidikan_terakhir']))? GetPendidikanTerakhir($data['pendidikan_terakhir']) : ''; 
 			$this->SetXY(214,$nilai_y);
-			$this->Cell(30,6,$edu,1,0,'L');
+			$this->Cell(30,6,$edu,1,0,'C');
 
 		$job 		='';
 		if (isset($data['pekerjaan']) && !is_null($data['pekerjaan'])) {
@@ -166,11 +176,12 @@ class Cetak extends ThirdParty{
 			$job 	= $divisi[$pecah[1]];
 		}
 		$this->SetXY(244,$nilai_y);
-		$this->Cell(30,6,$job,1,0,'L');
+		$this->Cell(30,6,$job,1,0,'C');
 		
 	}
  	
 	public function kk_konten_isi_vertikal_loop($nilai_y=0,$counter=0,$exclude=array(),$func='kk_konten_satu_isi'){
+		
 		if (!is_null($this->data) && isset($this->data['anggota'])) {
 			$data 		= array();
 			$no 		= 1;
@@ -189,28 +200,28 @@ class Cetak extends ThirdParty{
 	}
 
 	public function kk_konten_dua(){
-		$this->SetFont('Arial','',10);
+		$this->SetFont('Arial','',8);
 
-		$this->SetXY(17,108);
+		$this->SetXY(17,90);
 		$this->Cell(15,6,'No',1,0,'C');
-		$this->SetXY(32,108);
+		$this->SetXY(32,90);
 		$this->Cell(50,6,'Status Pernikahan',1,0,'C');
-		$this->SetXY(82,108);
+		$this->SetXY(82,90);
 		$this->Cell(50,6,'Status Hubungan Keluarga',1,0,'C');
-		$this->SetXY(132,108);
+		$this->SetXY(132,90);
 		$this->Cell(35,6,'Kewarganegaraan',1,'C',0);
-		$this->SetXY(167,108);
+		$this->SetXY(167,90);
 		$this->Cell(25,6,'No. Paspor',1,0,'C');
-		$this->SetXY(192,108);
+		$this->SetXY(192,90);
 		$this->Cell(25,6,'No. Kitas/Kitap',1,'C',0);
-		$this->SetXY(217,108);
+		$this->SetXY(217,90);
 		$this->Cell(29,6,'Ayah',1,0,'C');
-		$this->SetXY(246,108);
+		$this->SetXY(246,90);
 		$this->Cell(28,6,'Ibu',1,0,'C');
 			
 	}
 	public function kk_konten_dua_isi($nilai_y=0,$counter=0,$data=array()){
-		$this->SetFont('Arial','',10);
+		$this->SetFont('Arial','',7);
 
 		$no 			= (isset($data['no']))? $data['no'] : '';
 		$this->SetXY(17,$nilai_y);
@@ -239,6 +250,11 @@ class Cetak extends ThirdParty{
 
 		$this->SetXY(246,$nilai_y);
 		$this->Cell(28,6,'',1,0,'C');
+	}
+	function logo_pancasila(){
+		
+		$this->Image(base_url().'assets/img/garuda_pancasila.png',10.5, 5, 20, 20);
+		# code...
 	}
 
 }
