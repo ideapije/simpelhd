@@ -1,13 +1,9 @@
 <?php
-/**
-* 
-*/
 class Ajax_request extends Dashboard{
-	
 	function __construct(){
 		parent::__construct();
 	}
-	public function edit_person_byone(){
+	function edit_person_byone(){
 		$post_key	= array_keys($_POST);
 		$match 		= array_intersect($post_key, $this->person->GetFields());
 		$n_match	= count($match);
@@ -34,15 +30,7 @@ class Ajax_request extends Dashboard{
 			return $this->person->update(array('id'=>$_POST['id']),$data);	
 		}
 	}
-	public function get_job_json(){
-		$kodeA = GetKodeJob('A');
-		unset($kodeA[0]);
-		$kodeB = GetKodeJob('B');
-		unset($kodeB[0]);
-		$data  = array_merge($kodeA,$kodeB);
-		echo json_encode($data);
-	}
-	public function update_jml_kel(){
+	function update_jml_kel(){
 		if (isset($_POST['jml_anggota']) && isset($_POST['id'])) {
 			$kepkel			= $this->kepkel->get_by_id($_POST['id']);
 			if ($kepkel) {

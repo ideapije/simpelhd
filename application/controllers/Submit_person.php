@@ -3,17 +3,13 @@
 * 
 */
 class Submit_person extends Proses{
-	
 	function __construct(){
 		parent::__construct();
-		
-
 	}
-	public function index(){
+	function index(){
 		show_404();
 	}
-	
-	public function new_person(){
+	function new_person(){
 		if (isset($_POST['nama_lengkap'])) {
 			$data 		= $_POST;
 			$unset_list	= array('rt_nomer','rt_ketua','rw_nomer','rw_ketua');
@@ -51,15 +47,11 @@ class Submit_person extends Proses{
 			redirect('new_person','refresh');
 		}
 	}
-	public function update_person_step2(){
+	function update_person_step2(){
 		if (isset($_POST['nopegi']) && isset($_POST['pegi'])) {
 			$data 				= unset_larik($_POST,array('nopegi','pegi'));
 			$data['pekerjaan']  = max($_POST['nopegi'],$_POST['pegi']);
 			if ($this->person->update(array('id'=>$this->sesi['person']['id']),$data)){
-				//if (isset($this->sesi['person']['status'])) {
-					
-				//}
-				//$this->session->unset_userdata('person');
 				redirect('welcome/BuatKKStep3','refresh');
 			}else{
 				echo '<script>alert("gagal memperbaharui data -_-");</script>';
@@ -70,7 +62,7 @@ class Submit_person extends Proses{
 			redirect('new_person','refresh');	
 		}
 	}
-	public function new_kepkel(){
+	function new_kepkel(){
 		if (CekIsiPenuh($_POST)) {
 			if ((isset($_POST['nama'])) && ($id = $this->kepkel->save_data($_POST))) {
 				$data['kk_id'] 				= $id;
@@ -96,7 +88,7 @@ class Submit_person extends Proses{
 		redirect('welcome/kk_setup','refresh');
 	}
 
-	public function new_member_family(){
+	function new_member_family(){
 		if (isset($_POST['nama_lengkap'])) {
 			$nama 			= trim($_POST['nama_lengkap']); 
 			if (!empty($nama)) {
@@ -114,7 +106,7 @@ class Submit_person extends Proses{
 		}
 		redirect('welcome/kk_step/1','refresh');
 	}
-	public function update_kepkel(){
+	function update_kepkel(){
 		if (isset($_POST['id'])) {
 			$data 				= $_POST;
 			unset($data['id']);

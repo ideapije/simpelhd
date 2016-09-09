@@ -8,4 +8,5 @@ class Modelkepkel extends Pusat_Model{
 		parent::__construct();
 		$this->set_table_name('kepalakeluarga');
 	}
+	
 }

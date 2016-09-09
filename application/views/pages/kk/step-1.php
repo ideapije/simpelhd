@@ -11,13 +11,14 @@
     </thead>
     <tbody>
         <tr>
-        <?php if ($jmlkel < $personidentity->jml_anggota) : ?>
+        <?php
+        if ($jmlkel < $details->jml_anggota) : ?>
             <form action="<?php echo site_url('submit_person/new_member_family');?>" method="post">
             <td><input type="text" name="nama_lengkap" class="form-control" /></td>
             <td>
                 <input type="text" class="form-control" name="NIK">
             </td>
-            <td><textarea name="alamat" class="form-control"><?php echo (isset($personidentity))? $personidentity->alamat : '';?></textarea></td>
+            <td><textarea name="alamat" class="form-control"><?php echo (isset($details))? $details->alamat : '';?></textarea></td>
             <td><input type="number" name="passport_nomer" class="form-control" /></td>
             <td><input type="date" name="passport_tgl_terakhir" class="form-control tgl-step" /></td>
             <td>
@@ -60,6 +61,6 @@
          ?>
     </tbody>
     </table>        
-        <?php if ($jmlkel >= $personidentity->jml_anggota) : ?>
+        <?php if ($jmlkel >= $details->jml_anggota) : ?>
             <a href="<?php echo site_url('welcome/kk_step/2');?>" class="pull-right btn btn-lg btn-success">Selanjutnya</a>
         <?php endif;?>
