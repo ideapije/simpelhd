@@ -10,8 +10,8 @@ class Welcome extends Dashboard{
 		$this->load_admin_content_view('home');
 	}
 	public function kk_setup($id=false){
-		$data['labels'] 	= $this->labels->kepkel();
-		$data['fields']		= $this->labels->kepkel_field();
+		//$data['labels'] 	= $this->labels->kepkel();
+		//$data['fields']		= $this->labels->kepkel_field();
 		$data['action']		= 'submit_person/new_kepkel';
 		if ($id) {
 			$data['action']	= 'submit_person/update_kepkel';
@@ -25,12 +25,8 @@ class Welcome extends Dashboard{
 		}
 		
  	}
- 	public function kk_step($step='1'){
- 		if (isset($this->sesi['person']) && $this->sesi['person']['name']) {
- 			$data['kodewil']			= NOBREBES;
- 			$data['kepkel_id']			= $this->sesi['person']['id'];
- 			$data['personidentity']		= $this->kepkel->get_by_id($this->sesi['person']['id']);
- 			$data['keluarga']			= $this->person->get_by_kkid($this->sesi['person']['id']);
+ 	public function kk_step_content($step='1',$data=array()){
+ 		 	$data['keluarga']	= $this->person->get_by_kkid($this->sesi['person']['id']);
  			$data['perkawinan']			= $this->db->get_where('person',array('kk_id'=>$this->sesi['person']['id'],'status_perkawinan >='=>'2'))->result_array();
  			$data['jmlkel']				= count($data['keluarga']);
  			$data['goldar']				= GetGoldar();
@@ -43,7 +39,15 @@ class Welcome extends Dashboard{
 			$data['agama']				= GetAgama();
 			$data['gender']				= GetGender();
 			$data['kawin']				= Get_sts_kawin();
- 			$this->load_admin_content_view('kk/kk-step-'.$step,$data);
+			return $this->load->view('pages/kk/kk-step-'.$step,$data,true);
+ 	}
+ 	public function kk_step($step='1'){
+ 		if (isset($this->sesi['person']) && $this->sesi['person']['name']) {
+ 			$data['kodewil']			= NOBREBES;
+ 			$data['kepkel_id']			= $this->sesi['person']['id'];
+ 			$data['personidentity']		= $this->kepkel->get_by_id($this->sesi['person']['id']);
+			$data['part']				= $this->kk_step_content($step,$data);
+ 			$this->load_admin_content_view('wizard-table',$data);
  		}else{
  			$this->kk_setup();
  		}
