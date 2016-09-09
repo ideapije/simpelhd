@@ -27,6 +27,7 @@ class Cetak extends ThirdParty{
 			}
 		}
 	}
+	//menangkap angka 
 	public function set_data_by_lasturl(){	
 		$larik_url 	=$this->ci->uri->segment_array();
 		$n_larik_url= count($larik_url);
@@ -59,11 +60,7 @@ class Cetak extends ThirdParty{
 		}
 	}
 	public function index(){
-		//if (is_null($this->data)) {
-			$this->pdf_kk();
-		//}else{
-		//	echo 'tidak ada data yang dimuat';
-		//}
+		$this->pdf_kk();
 	}
 	public function pdf_kk(){
 		$this->AddPage();
@@ -137,40 +134,44 @@ class Cetak extends ThirdParty{
 	}
 	public function kk_konten_satu_isi($nilai_y=0,$counter=0,$data=array()){
 		$this->SetFont('Arial','',7);
+<<<<<<< HEAD
+		$no 		= (!is_null($data['no']))? $data['no'] : '';		
+=======
 		$no 		= (isset($data['no']))? $data['no'] : '';		
+>>>>>>> origin/master
 		$this->SetXY(17,$nilai_y);
 		$this->Cell(15,6,$no,1,0,'C');
 
-		$fullname	= (isset($data['nama_lengkap']))? $data['nama_lengkap'] : '';
+		$fullname	= (!is_null($data['nama_lengkap']))? $data['nama_lengkap'] : '';
 		$this->SetXY(32,$nilai_y);
 		$this->Cell(50,6,$fullname,1,0,'C');
 
-		$nik 		= (isset($data['NIK']))? $data['NIK'] : '';
+		$nik 		= (!is_null($data['NIK']))? $data['NIK'] : '';
 		$this->SetXY(82,$nilai_y);
 		$this->Cell(30,6,$nik,1,0,'C');
 
-		$gender 	= (isset($data['jenis_kelamin']))? GetGender($data['jenis_kelamin']) : '';
+		$gender 	= (!is_null($data['jenis_kelamin']) && !is_array(GetGender($data['jenis_kelamin'])))? GetGender($data['jenis_kelamin']) : '';
 		$this->SetXY(112,$nilai_y);
 		$this->Cell(16,6,$gender,1,0,'C');
 
-		$birthplace= (isset($data['lahir_tempat']))? $data['lahir_tempat'] : '';
+		$birthplace= (!is_null($data['lahir_tempat']))? $data['lahir_tempat'] : '';
 		$this->SetXY(128,$nilai_y);
 		$this->Cell(40,6,$birthplace,1,0,'L');
 		
-		$birthdate	= (isset($data['lahir_tanggal']))? $data['lahir_tanggal'] : '';
+		$birthdate	= (!is_null($data['lahir_tanggal']))? $data['lahir_tanggal'] : '';
 		$this->SetXY(168,$nilai_y);
 		$this->Cell(16,6,$birthdate,1,0,'L');
 		
-		$agama 		= (isset($data['agama']))? GetAgama($data['agama']) : '';
+		$agama 		= (!is_null($data['agama']) && !is_array(GetAgama($data['agama'])))? GetAgama($data['agama']) : '';
 		$this->SetXY(184,$nilai_y);
 		$this->Cell(30,6,$agama,1,0,'C');
 		
-		$edu		= (isset($data['pendidikan_terakhir']))? GetPendidikanTerakhir($data['pendidikan_terakhir']) : ''; 
+		$edu		= (!is_null($data['pendidikan_terakhir']) && !is_array(GetPendidikanTerakhir($data['pendidikan_terakhir'])))? GetPendidikanTerakhir($data['pendidikan_terakhir']) : ''; 
 			$this->SetXY(214,$nilai_y);
 			$this->Cell(30,6,$edu,1,0,'C');
 
 		$job 		='';
-		if (isset($data['pekerjaan']) && !is_null($data['pekerjaan'])) {
+		if (!is_null($data['pekerjaan']) && !is_null($data['pekerjaan'])) {
 			$pecah 	= explode('-', $data['pekerjaan']);
 			$divisi	= GetKodeJob($pecah[0]);
 			$job 	= $divisi[$pecah[1]];
@@ -182,7 +183,11 @@ class Cetak extends ThirdParty{
  	
 	public function kk_konten_isi_vertikal_loop($nilai_y=0,$counter=0,$exclude=array(),$func='kk_konten_satu_isi'){
 		
+<<<<<<< HEAD
+		if (!is_null($this->data) && !is_null($this->data['anggota'])) {
+=======
 		if (!is_null($this->data) && isset($this->data['anggota'])) {
+>>>>>>> origin/master
 			$data 		= array();
 			$no 		= 1;
 			foreach ($this->data['anggota'] as $key => $value) {
@@ -201,7 +206,10 @@ class Cetak extends ThirdParty{
 
 	public function kk_konten_dua(){
 		$this->SetFont('Arial','',8);
+<<<<<<< HEAD
+=======
 
+>>>>>>> origin/master
 		$this->SetXY(17,90);
 		$this->Cell(15,6,'No',1,0,'C');
 		$this->SetXY(32,90);
@@ -223,15 +231,15 @@ class Cetak extends ThirdParty{
 	public function kk_konten_dua_isi($nilai_y=0,$counter=0,$data=array()){
 		$this->SetFont('Arial','',7);
 
-		$no 			= (isset($data['no']))? $data['no'] : '';
+		$no 			= (!is_null($data['no']))? $data['no'] : '';
 		$this->SetXY(17,$nilai_y);
 		$this->Cell(15,6,$no,1,0,'C');
 
-		$status_keluarga = (isset($data['status_keluarga']))? get_status_kel($data['status_keluarga']) : '';
+		$status_keluarga = (!is_null($data['status_keluarga']) && !is_array(get_status_kel($data['status_keluarga'])))? get_status_kel($data['status_keluarga'])  : $status_keluarga='';
 		$this->SetXY(32,$nilai_y);
 		$this->Cell(50,6,$status_keluarga,1,0,'C');
 		
-		$status_perkawinan= (isset($data['status_perkawinan']))? get_sts_kawin($data['status_perkawinan']) : '';
+		$status_perkawinan= (!is_null($data['status_perkawinan'])  && !is_array(get_sts_kawin($data['status_perkawinan'])))? get_sts_kawin($data['status_perkawinan']) : '';
 		$this->SetXY(82,$nilai_y);
 		$this->Cell(50,6,$status_perkawinan,1,0,'C');
 		
@@ -250,11 +258,20 @@ class Cetak extends ThirdParty{
 
 		$this->SetXY(246,$nilai_y);
 		$this->Cell(28,6,'',1,0,'C');
+		
 	}
 	function logo_pancasila(){
 		
+<<<<<<< HEAD
+		$this->Image(base_url().'assets/img/garuda_pancasila.jpg',10.5, 5, 20, 20);
+		# code...
+	}
+	
+
+=======
 		$this->Image(base_url().'assets/img/garuda_pancasila.png',10.5, 5, 20, 20);
 		# code...
 	}
+>>>>>>> origin/master
 
 }

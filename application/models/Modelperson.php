@@ -9,54 +9,54 @@ class Modelperson extends Pusat_Model{
 		$this->set_table_name('person');
 		$this->set_list_column();
 	}
-	public function set_list_column(){
-		$this->list_column = array("`person`.`id`","`person`.`NIK`","`person`.`nama_lengkap`","`person`.`status_keluarga`","`person`.`jenis_kelamin`","`person`.`status_perkawinan`","`person`.`kk_id`");
+	function set_list_column(){
+		$this->list_column = array("`person`.`id`","`person`.`NIK`","`person`.`nama_lengkap`","`person`.`status_keluarga`","`person`.`jenis_kelamin`","`person`.`status_perkawinan`","`person`.`lahir_tanggal`");
 	}
 
-	public function get_details($id=0){
+	function get_details($id=0){
 		return $this->db->get_where('person',array('id'=>$id))->result_array();
 	}
-	public function get_by_kkid($id=''){
+	function get_by_kkid($id=''){
+		$this->db->select($this->list_column);
 		return $this->get_where(array('kk_id'=>$id));
 	}
-	public function get_base_person(){
+	function get_base_person(){
 		$this->db->select($this->list_column);
 		$this->db->from('person');
 		$this->db->join('kepalakeluarga',"`person`.`kk_id` = `kepalakeluarga`.`id`");
 	}
-	public function show_all(){
+	function show_all(){
 		$this->get_base_person();
 		return $this->db->get()->result_array();
 	}
-	public function show_all_datatablesformat(){
+	function show_all_datatablesformat(){
 		$this->set_json_db_limit();
 		$this->get_base_person();
 		$this->search_datatables_person();
 		return $this->db->get()->result_array();
 	}
-	public function show_detail_by_kkid_datatablesformat($id=0){
+	function show_detail_by_kkid_datatablesformat($id=0){
 		$this->set_json_db_limit();
-		//$this->get_base_person();
+		$this->get_base_person();
 		$this->db->from('person');
 		$this->db->where('kk_id',$id);
 		$this->search_datatables_person();
 		return $this->db->get()->result_array();
 	}
-	public function base_count_all(){
+	function base_count_all(){
 		$this->get_base_person();
 		return $this->db->count_all_results();
 	}
-	public function base_num_rows(){
+	function base_num_rows(){
 		$this->get_base_person();
 		return $this->db->get()->num_rows();
 	}
-	public function detailbase_num_rows($id=0){
-		//$this->get_base_person();
+	function detailbase_num_rows($id=0){
 		$this->db->from('person');
 		$this->db->where('kk_id',$id);
 		return $this->db->get()->num_rows();
 	}
-	public function search_datatables_person(){
+	function search_datatables_person(){
 		if (!is_null($this->list_column)) {
 			foreach ($this->list_column as $key => $value) {
 				if(isset($_POST['search']['value'])){
@@ -71,5 +71,15 @@ class Modelperson extends Pusat_Model{
 			}
 		}
 	}
+	function get_pasangan($kk_id=0,$status=1){
+		return $this->get_where(array('kk_id' =>$kk_id , 'status_keluarga'=>$status));
+	}
+
+	function sample_query_umur($param=0){
+		$send  = ($param >=17 && $param <= 25)? 'sudah ' : 'belum ';
+		$send .= $param;
+		return $send;
+	}
+
+
 }
-?>

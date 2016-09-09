@@ -3,11 +3,10 @@
 * 
 */
 class Submit_settings extends Proses{
-	
 	function __construct(){
 		parent::__construct();
 	}
-	public function set_config_kelurahan(){
+	function set_config_kelurahan(){
 		$data = array();
 		$keys = array_keys($_POST);
 		foreach ($keys as $key => $value) {
@@ -23,7 +22,7 @@ class Submit_settings extends Proses{
 		}
 		redirect('welcome/atur_profil_kelurahan','refresh');
 	}
-	public function get_key_exist($value=''){
+	function get_key_exist($value=''){
 		$cek 	= $this->konfig->get_where(array('kunci'=>$value));
 		$n_cek  = count($cek);
 		return ($n_cek > 0)? $cek[0]['id'] : false;

@@ -7,7 +7,7 @@ class ModelLabels extends Pusat_Model{
 	function __construct(){
 		parent::__construct();
 	}
-	public function kepkel(){
+	function kepkel(){
 		return array(
 			'No'
 			,'Nama Kepala Keluarga'
@@ -18,9 +18,13 @@ class ModelLabels extends Pusat_Model{
 			,'Ketua RT'
 			,'RW'
 			,'Ketua RW'
-			,'Jumlah Anggota Keluarga');
+			,'Jumlah Anggota Keluarga'
+			);
 	}
-	public function kepkel_field(){
+	function person(){
+		return array('No','NIK','Nama Lengkap','Status Keluarga','Jenis Kelamin','Status Perkawinan','KTP');
+	}
+	function kepkel_field(){
 		$this->set_table_name('kepalakeluarga');
 		$data = $this->GetFields();
 		if (isset($data[0])) {
@@ -28,7 +32,7 @@ class ModelLabels extends Pusat_Model{
 		}
 		return $data;
 	}
-	public function kk_header($key=false){
+	function kk_header($key=false){
 		$data = array(
 			'kiri'=>array('nama kepala Keluarga','alamat','RT/RW','Desa/Kelurahan')
 			,'kanan'=>array('Kecamatan','Kabupaten/Kota','Kode Pos','Provinsi')

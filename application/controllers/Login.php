@@ -7,13 +7,11 @@ class Login extends FrontPage{
 		parent::__construct();
 		
 	}
-
 	function index(){
 		$data['title']	='hello world';
 		$this->portal('login',$data);
 	}
-
-	public function login_aksi(){
+	function login_aksi(){
 		$username=$this->input->post('username');
 		$password=$this->input->post('password');
 		$cek 	 = $this->auth->cek_login('login',$this->logina($username,$password));
@@ -32,7 +30,7 @@ class Login extends FrontPage{
 			$this->index();
 		}
 	}
-	public function reset_pass_action(){
+	function reset_pass_action(){
 		$this->form_validation->set_rules('email', 'Email', 'required|valid_email|is_unique[login.email]');
 		if ($this->form_validation->run()) {
 			echo "<script> alert('Maaf, email belum terdaftar, coba yang lain');</script>";
@@ -59,5 +57,4 @@ class Login extends FrontPage{
 		}
 		$this->index();
 	}
-	
 }

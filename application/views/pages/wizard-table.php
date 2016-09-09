@@ -3,8 +3,8 @@
     <section class="panel">
     <header class="panel-heading">
         DATA KELUARGA Bpk 
-        <strong><?php echo (isset($personidentity))? ucfirst($personidentity->nama): 'Anonymous';?></strong> 
-        <a href="#" class="btn btn-success" title="lihat details"><i class="glyphicon glyphicon-zoom-in"></i></a>
+        <strong><?php echo (isset($details))? ucfirst($details->nama): 'Anonymous';?></strong> 
+        <a href="#simpelmodal" class="btn btn-success" data-toggle="modal" title="lihat details"><i class="glyphicon glyphicon-zoom-in"></i></a>
     </header>
     <div class="panel-body">
     <?php 

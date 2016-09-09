@@ -227,10 +227,18 @@
 			case 'kk_id':
 				$item 	= 'Bpk. <strong >'.ucfirst(GetKepKelById($item,'nama')).'</strong>';
 				break;
+			case 'lahir_tanggal':
+				$umur 	= GetUmur($item);
+				$item 	= buat_ktp($umur); 
+				break;
 			default:
 				$item 	= $item;
 				break;
 		}
+	}
+	function buat_ktp($param=0){
+		$ci =&get_instance(); // untuk menggunakan objek pada codeigniter 
+		return $ci->person->sample_query_umur($param); // baik controller, model, view dan library;
 	}
 	function TransfromFunc($item='0',$FuncName='get_status_kel'){
 		$item 	= $item;
@@ -384,7 +392,8 @@
 	}
 	function GetUmur($lahir='0000-00-00'){
 		$pecah = explode('-', $lahir);
-		return intval(date('Y') - $pecah[0]);
+		$hasil = intval(date('Y') - $pecah[0]);
+		return ($hasil <= 0)? 0 : $hasil;
 	}
 	function GetKepKelById($id='',$spesific=false){
 		$ci 	=&get_instance();

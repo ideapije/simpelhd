@@ -1,10 +1,6 @@
 $(document).ready(function() {
-    var url_action= $('span.url_act').text();
-
-    if ($('i.val-op-step').length == 1) {
-        var isiclass = $('i.val-op-step').text();
-        $('.option-uniq').addClass(isiclass);
-    };
+    var url_action = $('span.url_act').text();
+    
     $(document).on('change','.cekpwineg',function(){
         if ($(this).is(':checked')) {
             $('select[name="pegi"]').css('display','block');
@@ -50,7 +46,7 @@ $(document).ready(function() {
         updatePerson(kirim);
         //alert(this.value);
     });
-    $.getJSON(url_action+'/ajax_request/get_job_json', function(data){
+    $.getJSON(url_action+'/json/get_job_json', function(data){
         //if($('.auto-person-job').length == 1){
           $('.auto-person-job').each(function() {
             var $this = $(this);
@@ -94,8 +90,6 @@ $(document).ready(function() {
       });
       
     });
-    
-    //name="jml_anggota"
 });
 
 function updatePerson(kirim){
@@ -104,10 +98,11 @@ function updatePerson(kirim){
           url: url_action+'/ajax_request/edit_person_byone',
           data: kirim,
           type:"POST",
-          dataType:"json",
-          success: function(data){
-              //location.reload();
-              //console.log(data);
-          }
+          dataType:"json"
       });
+      if (kirim['kelainan_fisik']) {
+          location.reload();
+      };
+      
+
 }
