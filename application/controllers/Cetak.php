@@ -14,7 +14,7 @@ class Cetak extends ThirdParty{
 		$this->Cell(75,4,ucfirst($data),0,0,'L');
 		$this->SetXY(60,$y);
 		$this->Cell(75,4,':',0,0,'L');
-		$this->SetXY(195,$y);
+		$this->SetXY(194,$y);
 		$this->Cell(75,4,':',0,0,'L');
 	}
 	public function header_loop_vertical($x=0,$y=0,$counter=0,$data=array()){
@@ -134,7 +134,11 @@ class Cetak extends ThirdParty{
 	}
 	public function kk_konten_satu_isi($nilai_y=0,$counter=0,$data=array()){
 		$this->SetFont('Arial','',7);
+<<<<<<< HEAD
 		$no 		= (!is_null($data['no']))? $data['no'] : '';		
+=======
+		$no 		= (isset($data['no']))? $data['no'] : '';		
+>>>>>>> origin/master
 		$this->SetXY(17,$nilai_y);
 		$this->Cell(15,6,$no,1,0,'C');
 
@@ -179,7 +183,11 @@ class Cetak extends ThirdParty{
  	
 	public function kk_konten_isi_vertikal_loop($nilai_y=0,$counter=0,$exclude=array(),$func='kk_konten_satu_isi'){
 		
+<<<<<<< HEAD
 		if (!is_null($this->data) && !is_null($this->data['anggota'])) {
+=======
+		if (!is_null($this->data) && isset($this->data['anggota'])) {
+>>>>>>> origin/master
 			$data 		= array();
 			$no 		= 1;
 			foreach ($this->data['anggota'] as $key => $value) {
@@ -198,6 +206,10 @@ class Cetak extends ThirdParty{
 
 	public function kk_konten_dua(){
 		$this->SetFont('Arial','',8);
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
 		$this->SetXY(17,90);
 		$this->Cell(15,6,'No',1,0,'C');
 		$this->SetXY(32,90);
@@ -250,10 +262,16 @@ class Cetak extends ThirdParty{
 	}
 	function logo_pancasila(){
 		
+<<<<<<< HEAD
 		$this->Image(base_url().'assets/img/garuda_pancasila.jpg',10.5, 5, 20, 20);
 		# code...
 	}
 	
 
+=======
+		$this->Image(base_url().'assets/img/garuda_pancasila.png',10.5, 5, 20, 20);
+		# code...
+	}
+>>>>>>> origin/master
 
 }
