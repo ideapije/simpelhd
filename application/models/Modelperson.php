@@ -16,10 +16,17 @@ class Modelperson extends Pusat_Model{
 	function get_details($id=0){
 		return $this->db->get_where('person',array('id'=>$id))->result_array();
 	}
+	
 	function get_by_kkid($id=''){
-		$this->db->select($this->list_column);
+		
 		return $this->get_where(array('kk_id'=>$id));
 	}
+
+	function person_by_kk_id($id){
+		$this->db->select($this->list_column);
+		return $this->get_by_kkid($id);
+	}
+
 	function get_base_person(){
 		$this->db->select($this->list_column);
 		$this->db->from('person');
@@ -80,6 +87,5 @@ class Modelperson extends Pusat_Model{
 		$send .= $param;
 		return $send;
 	}
-
-
+	
 }

@@ -13,7 +13,7 @@
         <tr>
         <?php
         if ($jmlkel < $details->jml_anggota) : ?>
-            <form action="<?php echo site_url('submit_person/new_member_family');?>" method="post">
+            <form action="<?php echo site_url('submit/new_member_family');?>" method="post">
             <td><input type="text" name="nama_lengkap" class="form-control" /></td>
             <td>
                 <input type="text" class="form-control" name="NIK">
@@ -44,7 +44,7 @@
         <?php
             if (isset($keluarga)) {
                 foreach ($keluarga as $key => $value) { ?>
-                    <tr>
+                   <tr>
                         <td><?php echo ($value['status_keluarga']==1)? $value['nama_lengkap'] : ReplaceNullValue($value['nama_lengkap'],'nama_lengkap',$value['id']);?></td>
                         <td><?php echo ReplaceNullValue($value['NIK'],'NIK',$value['id']);?></td>
                         <td><?php echo ReplaceNullValue($value['alamat'],'alamat',$value['id']);?></td>
@@ -55,12 +55,12 @@
                             <a href="<?php echo site_url('welcome/person_remove/'.encrypt_url($value['id']));?>" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove"></i></a>
                             <?php endif;?>
                         </td>
-                    </tr>
+                    </tr>               
                 <?php }
             }
          ?>
     </tbody>
     </table>        
         <?php if ($jmlkel >= $details->jml_anggota) : ?>
-            <a href="<?php echo site_url('welcome/kk_step/2');?>" class="pull-right btn btn-lg btn-success">Selanjutnya</a>
+            <a href="<?php echo site_url('keluarga/step/2');?>" class="pull-right btn btn-lg btn-success">Selanjutnya</a>
         <?php endif;?>

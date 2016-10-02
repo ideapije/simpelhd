@@ -30,5 +30,5 @@
          ?>
     </tbody>
     </table>
-<a href="<?php echo site_url('welcome/kk_step/5');?>" class="pull-left btn btn-lg btn-default"><i class="glyphicon glyphicon-chevron-left"></i> Sebelumnya</a>        
-<a href="<?php echo site_url('welcome/kk_done');?>" class="pull-right btn btn-lg btn-success"><i class="glyphicon glyphicon-chevron-right"></i> Selesai</a>
+<a href="<?php echo site_url('keluarga/step/5');?>" class="pull-left btn btn-lg btn-default"><i class="glyphicon glyphicon-chevron-left"></i> Sebelumnya</a>        
+<a href="<?php echo site_url('keluarga/done');?>" class="pull-right btn btn-lg btn-success"><i class="glyphicon glyphicon-chevron-right"></i> Selesai</a>

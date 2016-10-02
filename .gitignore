@@ -9,3 +9,4 @@ assets/js/base/*
 assets/js/datatables/*
 assets/js/plug-in/*
 assets/js/validation/*
+application/config/*
