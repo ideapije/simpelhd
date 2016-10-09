@@ -12,7 +12,7 @@ class Pusat_Controller extends CI_Controller {
 
 //--------------------- Templates --------------------
 
-	public function set_enqueue($custom=array()){
+	function set_enqueue($custom=array()){
 		$n_custom = count($custom);
 		$this->data['css'] = array(
 			'css/bootstrap.min'
@@ -118,4 +118,11 @@ class Pusat_Controller extends CI_Controller {
 		return $send;
 	}
 
+// ------------- last url --------------------------
+
+	function last_url(){
+		$urls 	= $this->uri->segment_array();
+		$urls_n	= count($urls);
+		return $urls[$urls_n];
+	}
 }

@@ -3,7 +3,7 @@
     <section class="panel">
     <header class="panel-heading">Atur Profil kelurahan</header>
     <div class="panel-body">
-<form role="form" action="<?php echo site_url('submit_settings/set_config_kelurahan');?>" method="post">
+<form role="form" action="<?php echo site_url('submit/config_kelurahan');?>" method="post">
     <?php echo (is_null($errors))? '' : '<div class="alert alert-warning alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><strong>Perhatian !</strong>'.$errors.'</div>';?>
     <div class="col-xs-12 col-lg-6">
         <span class="col-xs-12 col-lg-3" >

@@ -2,12 +2,9 @@
 /**
 * 
 */
-class Submit_person extends Proses{
+class Submit extends Proses{
 	function __construct(){
 		parent::__construct();
-	}
-	function index(){
-		show_404();
 	}
 	function new_person(){
 		if (isset($_POST['nama_lengkap'])) {
@@ -16,11 +13,10 @@ class Submit_person extends Proses{
 			$data 		= unset_larik($data,$unset_list);
 			$nosys		= '0001';
 			$pecahTL	= explode('-', $data['lahir_tanggal']);
-
-			//$n2 = str_pad($n + 1, 5, 0, STR_PAD_LEFT);
+			
 			$data['NIK'] = NOBREBES.$pecahTL[2].$pecahTL[1].$pecahTL[0].$nosys;
 			if ($id = $this->person->save_data($data)) {
-				// kartu
+				
 				$kartukk['pengajuan_id'] = '1';
 				$kartukk['rt_nomer']	 = $_POST['rt_nomer'];
 				$kartukk['rw_nomer']	 = $_POST['rw_nomer'];
@@ -47,23 +43,12 @@ class Submit_person extends Proses{
 			redirect('new_person','refresh');
 		}
 	}
-	function update_person_step2(){
-		if (isset($_POST['nopegi']) && isset($_POST['pegi'])) {
-			$data 				= unset_larik($_POST,array('nopegi','pegi'));
-			$data['pekerjaan']  = max($_POST['nopegi'],$_POST['pegi']);
-			if ($this->person->update(array('id'=>$this->sesi['person']['id']),$data)){
-				redirect('welcome/BuatKKStep3','refresh');
-			}else{
-				echo '<script>alert("gagal memperbaharui data -_-");</script>';
-				redirect('new_person','refresh');	
-			}
-		}else{
-			echo '<script>alert("submit tidak valid");</script>';
-			redirect('new_person','refresh');	
-		}
-	}
 	function new_kepkel(){
-		if (CekIsiPenuh($_POST)) {
+		$this->validation->set_data($_POST);
+		$this->validation->required(
+			array('nama', 'jml_anggota', 'alamat', 'kodepos', 'telp')
+			,"Bidang 'Nama lengkap', 'jumlah anggota', 'alamat', 'kode pos' dan 'telephone' wajib diisi");
+		if ($this->validation->is_valid()) {
 			if ((isset($_POST['nama'])) && ($id = $this->kepkel->save_data($_POST))) {
 				$data['kk_id'] 				= $id;
 				$data['nama_lengkap'] 		= $_POST['nama'];
@@ -75,7 +60,7 @@ class Submit_person extends Proses{
 					$person['id'] 		= $id;
 					$person['name']		= $data['nama_lengkap'];
 					$this->session->set_userdata('person',$person);
-					redirect('welcome/kk_step/1','refresh');
+					redirect('keluarga/step/1','refresh');
 				}else{
 					$this->session->set_flashdata('errors_log','gagal menyimpan :(');
 				}
@@ -83,9 +68,9 @@ class Submit_person extends Proses{
 				$this->session->set_flashdata('errors_log','tidak valid');
 			}
 		}else{
-			$this->session->set_flashdata('errors_log','Data harus diisi semua');
+			$this->session->set_flashdata('errors_log',$this->validation->get_error_message());
 		}
-		redirect('welcome/kk_setup','refresh');
+		redirect('keluarga/setup','refresh');
 	}
 
 	function new_member_family(){
@@ -104,7 +89,7 @@ class Submit_person extends Proses{
 				}
 			}
 		}
-		redirect('welcome/kk_step/1','refresh');
+		redirect('keluarga/step/1','refresh');
 	}
 	function update_kepkel(){
 		if (isset($_POST['id'])) {
@@ -116,10 +101,33 @@ class Submit_person extends Proses{
 			$person['id'] 		= $_POST['id'];
 			$person['name']		= $data['nama'];
 			$this->session->set_userdata('person',$person);
-			redirect('welcome/kk_step/1','refresh');
+			redirect('keluarga/step/1','refresh');
 		}else{
 			$this->session->set_flashdata('errors_log','gagal menyimpan :(');
-			redirect('welcome/kk_setup','refresh');
+			redirect('keluarga/setup','refresh');
 		}
+	}
+
+	function config_kelurahan(){
+		$data = array();
+		$keys = array_keys($_POST);
+		foreach ($keys as $key => $value) {
+			$data['kunci']	= $value;
+			$data['isi']	= $_POST[$value];
+			if ($id = $this->get_key_exist($value)) {
+				$this->konfig->update(array('id'=>$id),$data);
+			}else{
+				if (!$this->konfig->save_data($data)) {
+					$this->session->set_flashdata('errors_log','gagal mengatur profil kelurahan :(');
+				}
+			}
+		}
+		redirect('home/atur_profil_kelurahan','refresh');
+	}
+	
+	function get_key_exist($value=''){
+		$cek 	= $this->konfig->get_where(array('kunci'=>$value));
+		$n_cek  = count($cek);
+		return ($n_cek > 0)? $cek[0]['id'] : false;
 	}
 }

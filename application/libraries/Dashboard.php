@@ -5,7 +5,7 @@ class Dashboard extends Pusat_Controller{
 		parent::__construct();
 		$this->cek_no_session_login();
 	}
-	function load_admin_content_view($fileName='',$data=array()){
+	function admin_view($fileName='',$data=array()){
 		if (isset($this->sesi['id'])) {
 			$data['myprofile']	= $this->session->userdata();
 		}
@@ -37,8 +37,8 @@ class Dashboard extends Pusat_Controller{
 		$data['tr'] 	= $this->$entitas->count_all();
 		$data['tf']		= $this->$entitas->count_filtered();
 		$data['links']	= array(
-				array('url'=>'Welcome/arsip_person_by_kepkelid','text'=>'Detail')
-				,array('url'=>'Welcome/kk_setup','text'=>'Ubah')
+				array('url'=>'arsip/all/person','text'=>'Detail')
+				,array('url'=>'keluarga/setup','text'=>'Ubah')
 				,array('url'=>'cetak/index','text'=>'Cetak')
 		);
 		if (count($custom)>0) {
@@ -80,7 +80,7 @@ class Dashboard extends Pusat_Controller{
 	}
 
 	function button_action_view($id=0){
-		$button  	= '<div class="btn-group" id="'.$id.'">';
+		$button  = '<div class="btn-group" id="'.$id.'">';
 		$button .= '<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">';
     	$button .= 'Aksi <span class="caret"></span></button>';
   		$button .= '<ul class="dropdown-menu" role="menu">';

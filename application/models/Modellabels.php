@@ -39,5 +39,17 @@ class ModelLabels extends Pusat_Model{
 		);
 		return ($key && isset($data[$key]))? $data[$key] : $data;
 	}
+	function type_date(){
+		$data['person'] = array('lahir_tanggal','passport_tgl_terakhir','perkawinan_tgl','cerai_tgl');
+		return $data;
+	}
+	function type_textarea(){
+		$data['person'] = array('alamat');
+		return $data;
+	}
+	function type_select(){
+		$data['person'] = array('jenis_kelamin','goldar','agama','pekerjaan');
+		return $data;
+	}
 }
 ?>

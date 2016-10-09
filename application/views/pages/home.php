@@ -1,5 +1,4 @@
-
-              <div class="row state-overview">
+<div class="row state-overview">
                   <div class="col-lg-3 col-sm-6">
                       <section class="panel">
                           <div class="symbol terques">

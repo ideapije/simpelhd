@@ -10,6 +10,7 @@
 	function IsNullOrEmptyString($question){
 		return (!isset($question) || trim($question)==='');
 	}
+	
 	function unset_larik($larik,$unset) {
 		foreach($unset as $value) {
 			if(array_key_exists($value,$larik)){
@@ -17,9 +18,6 @@
 			}
 		}
 		return $larik;
-	}
-	function dumpbool($label, $expr) {
-		print "$label: " . ($expr ? "TRUE" : "FALSE") . "\n";
 	}
 	
 	// Be silent about E_NOTICE errors, but make a note if we see one
@@ -52,60 +50,6 @@
 				_isdef_reset(); return FALSE;
 			} return TRUE;
 	}
-	function table_template(){
-		$template = array(
-			'table_open'            => '<div class="table-responsive"><table class="table table-bordered dataTable">',
-			'thead_open'            => '<thead>',
-			'thead_close'           => '</thead>',
-			'heading_row_start'     => '<tr>',
-			'heading_row_end'       => '</tr>',
-			'heading_cell_start'    => '<th>',
-			'heading_cell_end'      => '</th>',
-			'tbody_open'            => '<tbody>',
-			'tbody_close'           => '</tbody>',
-			'row_start'             => '<tr>',
-			'row_end'               => '</tr>',
-			'cell_start'            => '<td>',
-			'cell_end'              => '</td>',
-			'row_alt_start'         => '<tr>',
-			'row_alt_end'           => '</tr>',
-			'cell_alt_start'        => '<td>',
-			'cell_alt_end'          => '</td>',
-			'table_close'           => '</table></div>'
-		);
-		return $template;
-	}
-	function pagination_config($url='',$table='',$per=''){
-        $ci 		= &get_instance();
-        $attr 		= new Jvm_Model();
-        $table 	= $attr->attribute['prefix'].$table;
-        //pagination settings
-        $config['base_url']       = site_url($url);
-        $config['total_rows']     = $ci->db->count_all($table);
-        $config['per_page']       = $per;
-        $config['page_query_string'] = TRUE;
-        $config['query_string_segment'] = 'page';
-        $config['full_tag_open'] = '<ul class="pagination pagination-sm pg-nav">';
-        $config['full_tag_close'] = '</ul>';
-        $config['first_link'] = '&laquo; First';
-        $config['first_tag_open'] = '<li class="prev page">';
-        $config['first_tag_close'] = '</li>';
-        $config['last_link'] = 'Last &raquo;';
-        $config['last_tag_open'] = '<li class="next page">';
-        $config['last_tag_close'] = '</li>';
-        $config['next_link'] = 'Next &rarr;';
-        $config['next_tag_open'] = '<li class="next page">';
-        $config['next_tag_close'] = '</li>';
-        $config['prev_link'] = '&larr; Previous';
-        $config['prev_tag_open'] = '<li class="prev page">';
-        $config['prev_tag_close'] = '</li>';
-        $config['cur_tag_open'] = '<li class="active"><a href="">';
-        $config['cur_tag_close'] = '</a></li>';
-        $config['num_tag_open'] = '<li class="page">';
-        $config['num_tag_close'] = '</li>';
-        $config['anchor_class'] = 'follow_link';
-        return $config;
-	}
 
 	function array_keys_exist( array $array, $keys ) {
 		$count = 0;
@@ -126,23 +70,23 @@
 		$result = '';
 		$test = "";
 		for($i=0; $i<strlen($string); $i++) {
-			$char = substr($string, $i, 1);
-			$keychar = substr($key, ($i % strlen($key))-1, 1);
-			$char = chr(ord($char)+ord($keychar));
+			$char 		= substr($string, $i, 1);
+			$keychar 	= substr($key, ($i % strlen($key))-1, 1);
+			$char 		= chr(ord($char)+ord($keychar));
 			$test[$char]= ord($char)+ord($keychar);
-			$result.=$char;
+			$result		.=$char;
 		}
 		return urlencode(base64_encode($result));
 	}
 	function decrypt_url($string) {
-		$key = "IW_979805"; //key to encrypt and decrypts.
+		$key 	= "IW_979805"; //key to encrypt and decrypts.
 		$result = '';
 		$string = base64_decode(urldecode($string));
 		for($i=0; $i<strlen($string); $i++) {
-			$char = substr($string, $i, 1);
-			$keychar = substr($key, ($i % strlen($key))-1, 1);
-			$char = chr(ord($char)-ord($keychar));
-			$result.=$char;
+			$char 		= substr($string, $i, 1);
+			$keychar 	= substr($key, ($i % strlen($key))-1, 1);
+			$char 		= chr(ord($char)-ord($keychar));
+			$result		.=$char;
 		}
 		return $result;
 	}
@@ -156,85 +100,29 @@
 	}
 	
 	function get_status_class($id=false){
-		if($id){
-			$class =array('default','primary','warning','info','success');
-			return $class[$id-1];
-		}
-		return false;
+		$class = array('default','primary','warning','info','success');
+		return ($id)? $class[$id-1] : false;
 	}
-	function get_count_item_cart(){
-		$ci =&get_instance();
-		echo $ci->count_item_cart();
-	}
-	function CekIsiPenuh($data=array()){
-		$ci =&get_instance();
-		if(count($data) > 0){
-			foreach($data as $key => $value){
-				if ($key!='Kenaikan_Harga' && $key!=='stock') {
-					$cek[] =array('field'=>$key,'label'=>$key,'rules'=>'trim|required');
-				}
-			}
-			$ci->form_validation->set_rules($cek);
-			return $ci->form_validation->run();
-		}
-	}
+
 	function get_calculate_date($duedate){
          $now = time(); // or your date as well
          $duedate = strtotime($duedate);
          $datediff = $now - $duedate;
          return floor($datediff/(60*60*24));
     }
-    function table_templates(){
-	$template = array(
-	    'table_open'            => '<table style="width: 100%;" aria-describedby="jvm-datatables_info" role="grid" id="jvm-datatables" class="table table-striped table-bordered dataTable no-footer" width="100%" cellspacing="0">',
-        'thead_open'            => '<thead>',
-        'thead_close'           => '</thead>',
-        'heading_row_start'     => '<tr>',
-        'heading_row_end'       => '</tr>',
-        'heading_cell_start'    => '<th>',
-        'heading_cell_end'      => '</th>',
-        'tbody_open'            => '<tbody>',
-        'tbody_close'           => '</tbody>',
-        'row_start'             => '<tr>',
-        'row_end'               => '</tr>',
-        'cell_start'            => '<td>',
-        'cell_end'              => '</td>',
-        'row_alt_start'         => '<tr>',
-        'row_alt_end'           => '</tr>',
-        'cell_alt_start'        => '<td>',
-        'cell_alt_end'          => '</td>',
-        'table_close'           => '</table>'
-		);
-		return $template;
-    }
 
-  function filter_values(&$item, $key) {
-		$ci 	=&get_instance();
-		switch ($key) {
-			case 'nama':
-				$item 	= ucfirst($item);
-				break;
-			case 'jenis_kelamin':
-				$item 	= TransfromFunc($item,'GetGender');
-				//$item 	= $item;
-				break;
-			case 'status_keluarga':
-				$item 	= TransfromFunc($item,'get_status_kel');
-				break;
-			case 'status_perkawinan':
-				$item 	= TransfromFunc($item,'get_sts_kawin');
-				break;	
-			case 'kk_id':
-				$item 	= 'Bpk. <strong >'.ucfirst(GetKepKelById($item,'nama')).'</strong>';
-				break;
-			case 'lahir_tanggal':
-				$umur 	= GetUmur($item);
-				$item 	= buat_ktp($umur); 
-				break;
-			default:
-				$item 	= $item;
-				break;
-		}
+ 	function filter_values(&$item, $key) {
+		$ci 			=&get_instance();
+		$umur 			= GetUmur($item);
+		$filter_values	= array(
+			'nama' 				=> ucfirst($item)
+			,'jenis_kelamin'	=> TransfromFunc($item,'GetGender')
+			,'status_keluarga' 	=> TransfromFunc($item,'get_status_kel')
+			,'status_perkawinan'=> TransfromFunc($item,'get_sts_kawin')
+			//,'kk_id' 			=> 'Bpk. <strong >'.GetKepKelById($item,'nama').'</strong>'
+			,'lahir_tanggal'	=> buat_ktp($umur)
+		);
+		return (isset($filter_values[$key]))? $item = $filter_values[$key] : $item = $item;
 	}
 	function buat_ktp($param=0){
 		$ci =&get_instance(); // untuk menggunakan objek pada codeigniter 
@@ -248,36 +136,12 @@
 		return $item;
 	}
 
-	function role_name_by_id($id=''){
-		$ci =&get_instance();
-		$query = $ci->db->get_where('users_roles',array('id'=>$id));
-		$role_name='none';
-		if($query->num_rows() > 0){
-			$result = $query->row();
-			return $result->role_name;
-		}else{
-			return 'none';
-		}
-	}
 	function unset_range_of_range($data=array(),$start=0,$end=false){
 		($end)? $n=$end  : $n =count($data);
 		for($i =$start; $i < $n ; $i++){
 			unset($data[$i]);
 		}
 		return $data;
-	}
-	function cus_detail_by($id='',$spesific='cus_name'){
-		$ci 	=&get_instance();
-		$data 	=$ci->db->get_where('customers',array('id'=>$id));
-		$fields = $ci->db->list_fields('customers');
-		if ($data->num_rows() > 0 && in_array($spesific, $fields)) {
-			foreach ($data->result_array() as $key => $value) {
-				return $value[$spesific];
-			}
-		}else{
-			return false;
-		}
-
 	}
 	
 	function check_multi_keys_array($keys=array(),$data=array()){
@@ -307,13 +171,13 @@
 			return 0;
 		}
 	}
+	
 	function duedate(){
 		$duedate=date_create(date('Y-m-d'));
 		date_add($duedate,date_interval_create_from_date_string('14 days'));
 		return date_format($duedate,'Y-m-d');
 	}
 
-	
 	function sentence_case($string) {
     	$sentences = preg_split('/([.?!]+)/', $string, -1, PREG_SPLIT_NO_EMPTY|PREG_SPLIT_DELIM_CAPTURE);
     	$new_string = '';
@@ -329,23 +193,22 @@
 		$item=strtolower($item);
 	}
 
-	
 	function data_get_by_id($id=0,$table_name='brosur'){
 		$ci 	= &get_instance();
 		return $ci->db->get_where($table_name,array('id'=>$id))->row();
 	}
 	
-	
 	function get_indo_date($source='0000-00-00'){
-			$w 			= date('w',strtotime($source));
-			$d 			= date('d',strtotime($source));
-			$m 			= date('n',strtotime($source));
-			$y 			= date('Y',strtotime($source));
-			$hari 	= array('Minggu','Senin','Selasa','Rabu','Kamis',"jum'at",'sabtu');
-			$bulan 	= array('none','Januari','Febrauri','Maret','April','Mei','Juni','July','Agustus','September','Oktober','November','Desember');
-			$send 	= $hari[$w].', '.$d.' '.$bulan[$m].' '.$y;
-			return $send;
+		$w 			= date('w',strtotime($source));
+		$d 			= date('d',strtotime($source));
+		$m 			= date('n',strtotime($source));
+		$y 			= date('Y',strtotime($source));
+		$hari 	= array('Minggu','Senin','Selasa','Rabu','Kamis',"jum'at",'sabtu');
+		$bulan 	= array('none','Januari','Febrauri','Maret','April','Mei','Juni','July','Agustus','September','Oktober','November','Desember');
+		$send 	= $hari[$w].', '.$d.' '.$bulan[$m].' '.$y;
+		return $send;
 	}
+	
 	function GetKodeJob($key=false){
 		$data['A'] 	= array('pilih salah satu','Belum/Tidak Bekerja','Mengurus Rumah Tangga','Pelajar/Mahasiswa','Pensiunan','Pegawai Negri Sipil (PNS)','Tentara Nasional Indonesia (TNI)','Kepolisian RI (POLRI)','Perdagangan','Petani/Pekebun','Peternak','Nelayan/Perikanan','Industri','Konstruksi','Transportasi','Karyawan Swasta','Karyawan BUMN','Karyawan BUMD','Karyawan','Buruh','Buruh Tani/Perkebunan','Buruh Nelayan/Perikanan','Buuruh Peternakan','Pembantu Rumah Tangga','Tukang Cukur','Tukang Listrik','Tukang Batu','Tukang Kayu','Tukang Sol Sepatuu','Tukang Las/Pandai Besi','Tukang Jahit','Tukang Gigi','Penata Rias','Penata Busana','Penata Rambut','Mekanik','Seniman','Paraji','Perancang Busana','Penterjemah','Imam Masjid','Pendeta','Pastor','Wartawan','Ustadz/Muubaligh','Juru Masak','Promotor Acara','Anggota DPR-RI','Anggota DPD','Anggota BPK','Presiden','Wakil Presiden','Anggota Mahkamah Konstitusi','Anggota Kabinet/Kementrian','Duta Besar','Gubernur','Wakil Gubernur','Bupati','Wakil Bupati','Walikota','Wakil Walikota','Anggota DPRD Provinsi','Anggota DPRD Kabupaten/Kota');
 		$data['B']	= array('pilih salah satu','Dosen','Guru','Pilot','Pengacara','Notaris','Arsitek','Akuntan','Konsultan','Dokter','Bidan','Perawat','Apoteker','Psikiater/Psikolog','Penyiar Televisi','Penyiar Radio','Pelaut','Peneliti','Sopir','Pialang','Paranormal','Pedagang','Perangkat Desa','Kepala Desa','Biarawati','Wiraswasta');
@@ -385,10 +248,7 @@
 	}
 	function ReplaceNullValue($value=NULL,$name='',$id=''){
 		//if (is_null($value)) {
-			return '<input name="'.$name.'" id="'.$id.'" class="form-control submit-editable" value="'.$value.'"/>';
-		//}else{
-		//	return $value;
-		//}
+		return '<input name="'.$name.'" id="'.$id.'" class="form-control submit-editable" value="'.$value.'"/>';
 	}
 	function GetUmur($lahir='0000-00-00'){
 		$pecah = explode('-', $lahir);
@@ -397,11 +257,24 @@
 	}
 	function GetKepKelById($id='',$spesific=false){
 		$ci 	=&get_instance();
-		$query  = $ci->kepkel->get_where(array('id'=>$id));
-		return ($spesific && isset($query[0][$spesific]))? $query[0][$spesific] : $query;
+		$query  = $ci->kepkel->get_by_id($id);
+		return ($spesific && isset($query->$spesific))? $query->$spesific : (array)$query;
 	}
 	function DirectSelectOptionsView($name='',$source=array(),$id='',$selected=NULL){
 		$ci 	=&get_instance();
+		if ($name == 'pendidikan_terakhir') {
+			$person = $ci->person->get_by_id($id);
+			$age 	= GetUmur($person->lahir_tanggal);
+			if($age >=0 && $age < 6){
+				$source = unset_larik($source, number_in_array(3,10));
+			}elseif ($age >=6 && $age < 13) {
+				$source = unset_larik($source, number_in_array(4,10));
+			}elseif ($age >= 13 && $age < 16) {
+				$source = unset_larik($source, number_in_array(5,10));
+			}elseif ($age >=16 && $age < 19) {
+				$source = unset_larik($source, number_in_array(6,10));
+			}
+		}
 		return $ci->select_option_view($name,$source,$id,$selected);
 	}
 	function GetKonfigValByKey($kunci=''){
@@ -432,5 +305,15 @@
     	$d = DateTime::createFromFormat('Y-m-d', $date);
     	return $d && $d->format('Y-m-d') === $date;
 	}
+
+	function number_in_array($from=0,$until=10)
+	{
+		$send = array();
+		for($x = $from; $x <= $until;$x++ ){
+			$send[] = $x;
+		}
+		return $send;
+	}
+
 
 
