@@ -26,8 +26,8 @@
                         <td><?php echo (isset($kawin))? DirectSelectOptionsView('status_perkawinan',$kawin,$value['id'],$value['status_perkawinan']) : '';?></td>
                         <td><?php echo (isset($kawin))? DirectSelectOptionsView('pendidikan_terakhir',$pendakhir,$value['id'],$value['pendidikan_terakhir']) : '';?></td>
                         <td>
-                        <input type="text" id="<?php echo $value['id'];?>" name="pekerjaan" class="form-control auto-person-job <?php echo 'sc-jb-'.$value['id'];?>" value="<?php echo $pekerjaan;?>" /></td>
-                        <!--<input type="checkbox" class="pegi">Pegawai Negeri -->
+                            <input type="text" id="<?php echo $value['id'];?>" name="pekerjaan" class="form-control auto-person-job <?php echo 'sc-jb-'.$value['id'];?>" value="<?php echo $pekerjaan;?>" />
+                        </td>
                     </tr>
                 <?php }
             }

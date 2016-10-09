@@ -262,6 +262,19 @@
 	}
 	function DirectSelectOptionsView($name='',$source=array(),$id='',$selected=NULL){
 		$ci 	=&get_instance();
+		if ($name == 'pendidikan_terakhir') {
+			$person = $ci->person->get_by_id($id);
+			$age 	= GetUmur($person->lahir_tanggal);
+			if($age >=0 && $age < 6){
+				$source = unset_larik($source, number_in_array(3,10));
+			}elseif ($age >=6 && $age < 13) {
+				$source = unset_larik($source, number_in_array(4,10));
+			}elseif ($age >= 13 && $age < 16) {
+				$source = unset_larik($source, number_in_array(5,10));
+			}elseif ($age >=16 && $age < 19) {
+				$source = unset_larik($source, number_in_array(6,10));
+			}
+		}
 		return $ci->select_option_view($name,$source,$id,$selected);
 	}
 	function GetKonfigValByKey($kunci=''){
@@ -291,6 +304,15 @@
 	function validateDate($date){
     	$d = DateTime::createFromFormat('Y-m-d', $date);
     	return $d && $d->format('Y-m-d') === $date;
+	}
+
+	function number_in_array($from=0,$until=10)
+	{
+		$send = array();
+		for($x = $from; $x <= $until;$x++ ){
+			$send[] = $x;
+		}
+		return $send;
 	}
 
 

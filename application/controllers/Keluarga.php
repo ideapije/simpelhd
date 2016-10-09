@@ -50,7 +50,8 @@ class Keluarga extends Dashboard{
 			//$this->status_keluarga_terpilih($data['keluarga'],get_status_kel());
 			$data['kelainfisik']		= GetKelainanFisik();
 			$data['penycct']			= GetPenyndangCacat();
-			$data['pendakhir']			= GetPendidikanTerakhir();
+			$data['pendakhir']			= 
+			GetPendidikanTerakhir();
 			$data['agama']				= GetAgama();
 			$data['gender']				= GetGender();
 			$data['kawin']				= Get_sts_kawin();

@@ -80,7 +80,7 @@ class Dashboard extends Pusat_Controller{
 	}
 
 	function button_action_view($id=0){
-		$button  	= '<div class="btn-group" id="'.$id.'">';
+		$button  = '<div class="btn-group" id="'.$id.'">';
 		$button .= '<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">';
     	$button .= 'Aksi <span class="caret"></span></button>';
   		$button .= '<ul class="dropdown-menu" role="menu">';

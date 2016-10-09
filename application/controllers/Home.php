@@ -5,7 +5,7 @@ class Home extends Dashboard{
 	function __construct(){
 		parent::__construct();
 	}
-	function index(){		
+	function index(){
 		$this->admin_view('home');
 	}	
 	function atur_profil_kelurahan(){

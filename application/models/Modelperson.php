@@ -18,10 +18,9 @@ class Modelperson extends Pusat_Model{
 	}
 	
 	function get_by_kkid($id=''){
-		
 		return $this->get_where(array('kk_id'=>$id));
 	}
-
+	
 	function person_by_kk_id($id){
 		$this->db->select($this->list_column);
 		return $this->get_by_kkid($id);
@@ -36,20 +35,7 @@ class Modelperson extends Pusat_Model{
 		$this->get_base_person();
 		return $this->db->get()->result_array();
 	}
-	function show_all_datatablesformat(){
-		$this->set_json_db_limit();
-		$this->get_base_person();
-		$this->search_datatables_person();
-		return $this->db->get()->result_array();
-	}
-	function show_detail_by_kkid_datatablesformat($id=0){
-		$this->set_json_db_limit();
-		$this->get_base_person();
-		$this->db->from('person');
-		$this->db->where('kk_id',$id);
-		$this->search_datatables_person();
-		return $this->db->get()->result_array();
-	}
+
 	function base_count_all(){
 		$this->get_base_person();
 		return $this->db->count_all_results();

@@ -29,7 +29,7 @@ class Arsip extends Dashboard{
 
 		$data['person'] = array(
 			'thead'=> array('No','NIK','Nama Lengkap','Status Keluarga','Jenis Kelamin','Status Perkawinan','Keluarga','action')
-			,'link' => 'datatables/person_with_join'
+			,'link' => 'datatables/person_by_kkid/'.$this->last_url()
 		);
 		$data['kepkel'] = array(
 			'thead'=> $kepkel_column
