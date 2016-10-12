@@ -433,4 +433,12 @@
     	return $d && $d->format('Y-m-d') === $date;
 	}
 
+function passwordgenerator($length=10) {
+    $anu = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-=+;:,.?";
+    $password = substr(str_shuffle($anu),0,$length );
+    return $password;
+
+}
+//echo passwordgenerator();
+
 
