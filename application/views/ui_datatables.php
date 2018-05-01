@@ -209,9 +209,9 @@
 		 			echo '<td>';
 		 			$_id = 0;
 		 			if (isset($primary_key)) {
-		 				if (isset($value->$primary_key)) { // disini 
+		 				//if (isset($value->$primary_key)) { // disini 
 		 					$_id = is_object($value) ? $value->$primary_key : $value[$primary_key]; // disni
-		 				}
+		 				//}
 		 			}
 		 			if (function_exists('set_datatables_action') && isset($group_id)) {
 		 				if (isset($action[$group_id])) {

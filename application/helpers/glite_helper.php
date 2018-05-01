@@ -88,9 +88,12 @@ function get_audit_value($id_post,$id_seeker)
 		 						
 		 					}elseif ($label == 'hapus' || $label =='delete') {
 		 						$button_action .= anchor(
-		 							$url.$_id
+		 							$url.'/'.$_id
 		 							,ucfirst($label)
-		 							,array('class'=>'btn btn-danger btn-confirm-link')
+		 							,array(
+		 								'class'=>'btn btn-danger btn-confirm-link',
+		 								'onclick'=>'return confirm("anda yakin?")'
+		 							)
 		 						);
 		 					}else{
 		 						$button_action .= anchor(

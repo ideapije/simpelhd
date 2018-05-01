@@ -33,7 +33,7 @@ class Admin extends MY_Controller
 						, $data['password']
 						, $data['email']
 						, array()	
-						, $data['group']
+						, array($data['group'])
 					);
         			if($user_id){
             			$this->db->where('id',$user_id);
