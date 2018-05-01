@@ -137,10 +137,9 @@ class Welcome extends MY_Controller{
 	public function submit_ajukan_ktp()
 	{
 		$data = $this->input->post(NULL, TRUE);
-		$id_person = $data['id_person'];
-		unset($data['id_person']);
-		if($id_person){
-			$this->db->where('id_person', $id_person)->update('person', $data);
+		if(isset($data['id_person'])){
+			unset($data['id_person']);
+			$this->db->where('id_person', $_POST['id_person'])->update('person', $data);
 			$this->session->set_flashdata('sukses', 'data berhasil di update!');
 			redirect(base_url('welcome/daftar/person'));
 		}else{

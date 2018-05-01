@@ -64,18 +64,6 @@
 <form action="<?php echo (isset($table_name) && isset($me))? site_url($me.'/simpan/'.$table_name) : '#';?>" method="post" enctype="multipart/form-data">
 
 	<div class="row">
-  		<div class="col">
-  			<div class="text-center">
-  				
-  				<button type="submit" class="btn btn-primary">
-  					<i class="fa fa-send"></i>
-  					Simpan
-  				</button>
-  			</div>	
-  		</div>
-  	</div>
-
-	<div class="row">
 		<div class="col-md-12" style="margin-bottom: 10px;">
 			<div style="width: 50%; margin:auto;">
 	<?php 
