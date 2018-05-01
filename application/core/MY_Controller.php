@@ -172,10 +172,13 @@ class MY_Controller extends MY_Custom
 	{
 		$data 			= array();
 		$this->load->model('users');
+		$this->load->helper('glite');
+		
 		if ($this->logged_in) {
 			$data 		= $this->logged_in;
 			$data['info'] 	= $this->users->get($this->logged_in['user_id']);
 		}
+		$data['roles'] = $this->db->get_where('users_groups',array('user_id'=>$this->logged_in['user_id']))->result_array();
 		$this->template->set_content('pages/detail_pribadi',$data)->render();
 	}
 
