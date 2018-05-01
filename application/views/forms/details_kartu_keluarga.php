@@ -17,7 +17,7 @@
 			<h1 style="margin-bottom: 50px; margin-top: 0px;">Kartu Keluarga</h1>
 		</div>
 		<div class="col-lg-6 text-right">
-			<?=anchor('welcome/cetak_kk/'.	$id_keluarga, '<i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit Kartu Keluarga', array('class'=>'btn btn-primary btn-custom-a', 'style'=>'margin-right:5px;'))?>
+			<?=anchor('welcome/edit_kartu_keluarga/'.	$id_keluarga, '<i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit Kartu Keluarga', array('class'=>'btn btn-primary btn-custom-a', 'style'=>'margin-right:5px;'))?>
 			<?=anchor('welcome/cetak_kk/'.	$id_keluarga, '<i class="fa fa-print" aria-hidden="true"></i> Print', array('class'=>'btn btn-primary btn-custom-a-no'))?>
 		</div>
 		<div class="col-lg-7">

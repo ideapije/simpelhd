@@ -12,5 +12,3 @@ $config['input_auto'] = array(
 );
 
 $config['menu'][10] =  array('users','kelurahan', 'person','keluarga') ;
-
-

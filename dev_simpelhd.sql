@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.4.14
+-- version 4.5.1
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 10, 2017 at 06:27 AM
--- Server version: 5.6.26
--- PHP Version: 5.6.12
+-- Generation Time: May 01, 2018 at 11:23 AM
+-- Server version: 10.1.13-MariaDB
+-- PHP Version: 5.5.37
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -26,7 +26,7 @@ SET time_zone = "+00:00";
 -- Table structure for table `berkas`
 --
 
-CREATE TABLE IF NOT EXISTS `berkas` (
+CREATE TABLE `berkas` (
   `id_berkas` bigint(20) NOT NULL,
   `nama_berkas` text,
   `jenis_berkas` text,
@@ -43,11 +43,11 @@ CREATE TABLE IF NOT EXISTS `berkas` (
 -- Table structure for table `groups`
 --
 
-CREATE TABLE IF NOT EXISTS `groups` (
-  `id` mediumint(8) unsigned NOT NULL,
+CREATE TABLE `groups` (
+  `id` mediumint(8) UNSIGNED NOT NULL,
   `name` varchar(125) NOT NULL,
   `description` varchar(225) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `groups`
@@ -62,46 +62,59 @@ INSERT INTO `groups` (`id`, `name`, `description`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `keluarga`
+-- Table structure for table `kartukeluarga`
 --
 
-CREATE TABLE IF NOT EXISTS `keluarga` (
-  `id_keluarga` int(20) unsigned NOT NULL,
-  `id_person` int(20) unsigned NOT NULL,
-  `no_kk` int(20) unsigned NOT NULL,
-  `nik` int(20) unsigned NOT NULL,
-  `hub_keluarga` varchar(50) DEFAULT NULL,
-  `status_perkawinan` varchar(50) DEFAULT NULL,
-  `nama_ibu` varchar(255) DEFAULT NULL,
-  `nama_ayah` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `keluarga`
---
-
-INSERT INTO `keluarga` (`id_keluarga`, `id_person`, `no_kk`, `nik`, `hub_keluarga`, `status_perkawinan`, `nama_ibu`, `nama_ayah`) VALUES
-(1, 1, 21414214, 125, 'anak', 'belum menikah', 'yushinta', 'muskar');
+CREATE TABLE `kartukeluarga` (
+  `id_kartukeluarga` int(20) UNSIGNED NOT NULL,
+  `id_keluarga` int(20) UNSIGNED NOT NULL,
+  `id_person` int(20) UNSIGNED NOT NULL,
+  `hub_keluarga` enum('1','2','3','4','5','6','7','8','9','10','11') DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `kependudukan`
+-- Table structure for table `keluarga`
 --
 
-CREATE TABLE IF NOT EXISTS `kependudukan` (
-  `id_kependudukan` int(20) unsigned NOT NULL,
-  `id_keluarga` int(20) unsigned NOT NULL,
-  `no_rw` int(10) NOT NULL,
-  `no_rt` int(10) NOT NULL,
-  `no_kk` int(20) unsigned NOT NULL,
-  `desa` varchar(100) DEFAULT NULL,
-  `kelurahan` varchar(100) DEFAULT NULL,
+CREATE TABLE `keluarga` (
+  `id_keluarga` int(20) UNSIGNED NOT NULL,
+  `no_kk` varchar(100) DEFAULT NULL,
+  `nik_kepkel` varchar(100) NOT NULL,
+  `alamat` varchar(255) DEFAULT NULL,
+  `kode_pos` int(20) DEFAULT NULL,
+  `no_rt` varchar(15) DEFAULT NULL,
+  `no_rw` varchar(15) DEFAULT NULL,
+  `jumlah_anggota_keluarga` int(5) DEFAULT NULL,
+  `telepon` varchar(75) DEFAULT NULL,
+  `provinsi` varchar(50) DEFAULT NULL,
+  `kabupaten_kota` varchar(50) DEFAULT NULL,
+  `kecamatan` varchar(50) DEFAULT NULL,
+  `desa_kelurahan` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `kelurahan`
+--
+
+CREATE TABLE `kelurahan` (
+  `id_kelurahan` int(20) UNSIGNED NOT NULL,
+  `nama_kelurahan` varchar(100) DEFAULT NULL,
+  `kode_provinsi` int(20) DEFAULT NULL,
+  `provinsi` varchar(100) DEFAULT NULL,
+  `kode_kabupaten_kota` int(20) DEFAULT NULL,
+  `kabupaten_kota` varchar(100) DEFAULT NULL,
+  `kode_kecamatan` int(20) DEFAULT NULL,
   `kecamatan` varchar(100) DEFAULT NULL,
-  `kota` varchar(100) DEFAULT NULL,
-  `kabupaten` varchar(100) DEFAULT NULL,
-  `kode_pos` int(10) NOT NULL,
-  `provinsi` varchar(100) DEFAULT NULL
+  `kode_desa_kelurahan` int(20) DEFAULT NULL,
+  `desa_kelurahan` varchar(100) DEFAULT NULL,
+  `nama_camat` varchar(100) DEFAULT NULL,
+  `nip_camat` varchar(100) DEFAULT NULL,
+  `nama_lurah` varchar(100) DEFAULT NULL,
+  `nip_lurah` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -110,7 +123,7 @@ CREATE TABLE IF NOT EXISTS `kependudukan` (
 -- Table structure for table `keys`
 --
 
-CREATE TABLE IF NOT EXISTS `keys` (
+CREATE TABLE `keys` (
   `id` bigint(20) NOT NULL,
   `id_user` bigint(20) DEFAULT NULL,
   `key` text,
@@ -119,7 +132,7 @@ CREATE TABLE IF NOT EXISTS `keys` (
   `is_private_key` tinyint(1) DEFAULT NULL,
   `ip_addresses` text,
   `date_created` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `keys`
@@ -134,11 +147,11 @@ INSERT INTO `keys` (`id`, `id_user`, `key`, `level`, `ignore_limits`, `is_privat
 -- Table structure for table `login_attempts`
 --
 
-CREATE TABLE IF NOT EXISTS `login_attempts` (
-  `id` mediumint(8) unsigned NOT NULL,
+CREATE TABLE `login_attempts` (
+  `id` mediumint(8) UNSIGNED NOT NULL,
   `ip_address` varchar(16) NOT NULL,
   `login` varchar(100) DEFAULT NULL,
-  `time` int(11) unsigned DEFAULT NULL
+  `time` int(11) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -147,7 +160,7 @@ CREATE TABLE IF NOT EXISTS `login_attempts` (
 -- Table structure for table `migrations`
 --
 
-CREATE TABLE IF NOT EXISTS `migrations` (
+CREATE TABLE `migrations` (
   `version` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -156,7 +169,7 @@ CREATE TABLE IF NOT EXISTS `migrations` (
 --
 
 INSERT INTO `migrations` (`version`) VALUES
-(7);
+(8);
 
 -- --------------------------------------------------------
 
@@ -164,11 +177,11 @@ INSERT INTO `migrations` (`version`) VALUES
 -- Table structure for table `pengajuan`
 --
 
-CREATE TABLE IF NOT EXISTS `pengajuan` (
-  `id_pengajuan` int(20) unsigned NOT NULL,
-  `id_person` int(20) unsigned NOT NULL,
+CREATE TABLE `pengajuan` (
+  `id_pengajuan` int(20) UNSIGNED NOT NULL,
+  `id_person` int(20) UNSIGNED NOT NULL,
   `jenis_pengajuan` varchar(100) DEFAULT NULL,
-  `nik` int(20) unsigned NOT NULL,
+  `nik` varchar(100) NOT NULL,
   `tgl_pengajuan` date DEFAULT NULL,
   `tgl_jadi` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -179,33 +192,45 @@ CREATE TABLE IF NOT EXISTS `pengajuan` (
 -- Table structure for table `person`
 --
 
-CREATE TABLE IF NOT EXISTS `person` (
-  `id_person` int(20) unsigned NOT NULL,
-  `nik` int(20) unsigned NOT NULL,
-  `nama` varchar(255) DEFAULT NULL,
-  `jenis_kelamin` enum('L','P') DEFAULT NULL,
+CREATE TABLE `person` (
+  `id_person` int(20) UNSIGNED NOT NULL,
+  `nik` varchar(100) DEFAULT NULL,
+  `nama` varchar(100) DEFAULT NULL,
+  `gelar` enum('0','1','2','3') DEFAULT NULL,
+  `alamat_sebelumnya` text,
+  `no_paspor` varchar(100) DEFAULT NULL,
+  `tgl_berakhir_paspor` date DEFAULT NULL,
+  `jenis_kelamin` enum('1','2') DEFAULT NULL,
   `lahir_tempat` text,
   `lahir_tanggal` date DEFAULT NULL,
-  `lahir_no_akte` varchar(125) DEFAULT NULL,
-  `goldar` varchar(5) DEFAULT NULL,
-  `alamat` varchar(255) DEFAULT NULL,
-  `agama` varchar(20) DEFAULT NULL,
-  `pekerjaan` varchar(125) DEFAULT NULL,
-  `kelainan_fisik` varchar(5) DEFAULT NULL,
-  `penyandang_cacat` varchar(5) DEFAULT NULL,
-  `pendidikan_terakhir` varchar(5) DEFAULT NULL,
-  `passport_nomor` varchar(125) DEFAULT NULL,
-  `passport_tgl_terakhir` date DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `person`
---
-
-INSERT INTO `person` (`id_person`, `nik`, `nama`, `jenis_kelamin`, `lahir_tempat`, `lahir_tanggal`, `lahir_no_akte`, `goldar`, `alamat`, `agama`, `pekerjaan`, `kelainan_fisik`, `penyandang_cacat`, `pendidikan_terakhir`, `passport_nomor`, `passport_tgl_terakhir`) VALUES
-(1, 123, 'rifqi', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(2, 124, 'andi', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(3, 125, 'muskar', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+  `akta_lahir` enum('1','2') DEFAULT NULL,
+  `no_akta_lahir` varchar(100) DEFAULT NULL,
+  `goldar` enum('1','2','3','4','5','6','7','8','9','10','11','12','13') DEFAULT NULL,
+  `agama` enum('1','2','3','4','5','6','7') DEFAULT NULL,
+  `kepercayaan_tuhan_YME` varchar(100) DEFAULT NULL,
+  `status_perkawinan` enum('1','2','3','4') DEFAULT NULL,
+  `kelainan_fisik_mental` enum('1','2') DEFAULT NULL,
+  `penyandang_cacat` enum('1','2','3','4','5','6') DEFAULT NULL,
+  `pendidikan_terakhir` varchar(50) DEFAULT NULL,
+  `pekerjaan` varchar(100) DEFAULT NULL,
+  `nik_ibu` varchar(100) DEFAULT NULL,
+  `nama_ibu` varchar(100) DEFAULT NULL,
+  `nik_ayah` varchar(100) DEFAULT NULL,
+  `nama_ayah` varchar(100) DEFAULT NULL,
+  `kewarganegaraan` enum('1','2') DEFAULT NULL,
+  `keturunan` enum('1','2','3','4','5') DEFAULT NULL,
+  `kebangsaan` varchar(50) DEFAULT NULL,
+  `rt` varchar(12) DEFAULT NULL,
+  `rw` varchar(12) DEFAULT NULL,
+  `desa_kelurahan` varchar(50) DEFAULT NULL,
+  `kecamatan` varchar(50) DEFAULT NULL,
+  `akta_perkawinan` enum('1','2') DEFAULT NULL,
+  `no_akta_perkawinan` int(100) DEFAULT NULL,
+  `tgl_perkawinan` date DEFAULT NULL,
+  `akta_cerai` enum('1','2') DEFAULT NULL,
+  `no_akta_cerai` int(100) DEFAULT NULL,
+  `tgl_perceraian` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -213,8 +238,8 @@ INSERT INTO `person` (`id_person`, `nik`, `nama`, `jenis_kelamin`, `lahir_tempat
 -- Table structure for table `users`
 --
 
-CREATE TABLE IF NOT EXISTS `users` (
-  `id` mediumint(8) unsigned NOT NULL,
+CREATE TABLE `users` (
+  `id` mediumint(8) UNSIGNED NOT NULL,
   `ip_address` varchar(16) NOT NULL,
   `username` varchar(100) NOT NULL,
   `password` varchar(80) NOT NULL,
@@ -222,21 +247,20 @@ CREATE TABLE IF NOT EXISTS `users` (
   `email` varchar(100) NOT NULL,
   `activation_code` varchar(40) DEFAULT NULL,
   `forgotten_password_code` varchar(40) DEFAULT NULL,
-  `forgotten_password_time` int(11) unsigned DEFAULT NULL,
+  `forgotten_password_time` int(11) UNSIGNED DEFAULT NULL,
   `remember_code` varchar(40) DEFAULT NULL,
-  `created_on` int(11) unsigned NOT NULL,
-  `last_login` int(11) unsigned DEFAULT NULL,
-  `active` tinyint(1) unsigned DEFAULT NULL,
+  `created_on` int(11) UNSIGNED NOT NULL,
+  `last_login` int(11) UNSIGNED DEFAULT NULL,
+  `active` tinyint(1) UNSIGNED DEFAULT NULL,
   `real_name` varchar(50) DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`id`, `ip_address`, `username`, `password`, `salt`, `email`, `activation_code`, `forgotten_password_code`, `forgotten_password_time`, `remember_code`, `created_on`, `last_login`, `active`, `real_name`) VALUES
-(1, '127.0.0.1', 'administrator', '$2a$07$SeBknntpZror9uyftVopmu61qg0ms8Qv1yV6FG.kQOSM.9QhmTo36', '', 'admin@admin.com', '', NULL, NULL, NULL, 1508243987, 1512874785, 1, 'superadmin'),
-(2, '', 'rifqi', 'rifqi', '', 'bosanmaingame@gmail.com', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL);
+(1, '127.0.0.1', 'administrator', '$2a$07$SeBknntpZror9uyftVopmu61qg0ms8Qv1yV6FG.kQOSM.9QhmTo36', '', 'admin@admin.com', '', NULL, NULL, NULL, 1525166605, 1525166605, 1, 'superadmin');
 
 -- --------------------------------------------------------
 
@@ -244,11 +268,11 @@ INSERT INTO `users` (`id`, `ip_address`, `username`, `password`, `salt`, `email`
 -- Table structure for table `users_groups`
 --
 
-CREATE TABLE IF NOT EXISTS `users_groups` (
-  `id` mediumint(8) unsigned NOT NULL,
-  `user_id` mediumint(8) unsigned NOT NULL,
-  `group_id` mediumint(8) unsigned NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+CREATE TABLE `users_groups` (
+  `id` mediumint(8) UNSIGNED NOT NULL,
+  `user_id` mediumint(8) UNSIGNED NOT NULL,
+  `group_id` mediumint(8) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `users_groups`
@@ -274,16 +298,22 @@ ALTER TABLE `groups`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `kartukeluarga`
+--
+ALTER TABLE `kartukeluarga`
+  ADD PRIMARY KEY (`id_kartukeluarga`);
+
+--
 -- Indexes for table `keluarga`
 --
 ALTER TABLE `keluarga`
   ADD PRIMARY KEY (`id_keluarga`);
 
 --
--- Indexes for table `kependudukan`
+-- Indexes for table `kelurahan`
 --
-ALTER TABLE `kependudukan`
-  ADD PRIMARY KEY (`id_kependudukan`);
+ALTER TABLE `kelurahan`
+  ADD PRIMARY KEY (`id_kelurahan`);
 
 --
 -- Indexes for table `keys`
@@ -334,47 +364,52 @@ ALTER TABLE `berkas`
 -- AUTO_INCREMENT for table `groups`
 --
 ALTER TABLE `groups`
-  MODIFY `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=12;
+  MODIFY `id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+--
+-- AUTO_INCREMENT for table `kartukeluarga`
+--
+ALTER TABLE `kartukeluarga`
+  MODIFY `id_kartukeluarga` int(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `keluarga`
 --
 ALTER TABLE `keluarga`
-  MODIFY `id_keluarga` int(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+  MODIFY `id_keluarga` int(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table `kependudukan`
+-- AUTO_INCREMENT for table `kelurahan`
 --
-ALTER TABLE `kependudukan`
-  MODIFY `id_kependudukan` int(20) unsigned NOT NULL AUTO_INCREMENT;
+ALTER TABLE `kelurahan`
+  MODIFY `id_kelurahan` int(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `keys`
 --
 ALTER TABLE `keys`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `login_attempts`
 --
 ALTER TABLE `login_attempts`
-  MODIFY `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT;
+  MODIFY `id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `pengajuan`
 --
 ALTER TABLE `pengajuan`
-  MODIFY `id_pengajuan` int(20) unsigned NOT NULL AUTO_INCREMENT;
+  MODIFY `id_pengajuan` int(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `person`
 --
 ALTER TABLE `person`
-  MODIFY `id_person` int(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+  MODIFY `id_person` int(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+  MODIFY `id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `users_groups`
 --
 ALTER TABLE `users_groups`
-  MODIFY `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+  MODIFY `id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

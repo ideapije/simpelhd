@@ -44,6 +44,11 @@ class Migration_Install_Keluarga extends CI_Migration {
                       'constraint' => '15',
                       'null'=>TRUE
               ),
+              'jumlah_anggota_keluarga' => array(
+                      'type' => 'INT',
+                      'constraint' => '5',
+                      'null'=>TRUE
+              ),
               'telepon' => array(
                       'type' => 'VARCHAR',
                       'constraint' => '75',
