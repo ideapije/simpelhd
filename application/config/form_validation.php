@@ -44,6 +44,9 @@ $config = array(
 		array('field'=>'stok_produk','label'=>'Stok Produk','rules'=>'trim|required|is_natural')
 		,array('field'=>'id','label'=>'id produk','rules'=>'trim|required|is_natural_no_zero')
 	),
+	'edit_users'=>array(
+		array('field'=>'username','label'=>'Nama akun','rules'=>'trim|required|is_unique[users.username]')
+		,array('field'=>'email','label'=>'Email','rules'=>'trim|required|valid_email|is_unique[users.email]')
 
-	
+	),
 );

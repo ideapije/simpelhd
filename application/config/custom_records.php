@@ -16,8 +16,6 @@ $config['users']['input'] = array(
 	'real_name'
 	,'username'
 	,'email'
-	,'phone'
-	,'company'
 	,'active'
 );
 $config['users']['toolbar']= array(
