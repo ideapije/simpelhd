@@ -239,4 +239,15 @@ function get_audit_value($id_post,$id_seeker)
 		}
 	}
 
+	
+	function get_group_name($id_group=''){
+		$ci =&get_instance();
+		$ci->load->model('groups');
+		$data = $ci->groups->get($id_group);
+		if (isset($data['name'])) {
+			return $data['name'];
+		}
+		return false;
+	}
+
 
