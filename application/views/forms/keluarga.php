@@ -27,17 +27,17 @@
 		<!-- tabs -->
 		<div class="col-md-12">
 	  		<div class="form-horizontal" style="width: 50%; margin:auto;">
-			  <!-- <div class="form-group">
+			  <div class="form-group">
 			    <label class="col-sm-3 control-label">Nomor KK</label>
 			    <div class="col-sm-8">
 			   	 <input type="text" autofocus name="no_kk" class="form-control">
 				</div>
-			  </div> -->
+			  </div>
 
 			  <div class="form-group">
 			    <label class="col-sm-3 control-label">NIK Kepala Keluarga</label>
 			    <div class="col-sm-8">
-			   	 <input type="text" autofocus name="nik_kepkel" id="nik_person" class="form-control" required>
+			   	 <input type="text" name="nik_kepkel" id="nik_person" class="form-control" required>
 				</div>
 			  </div>
 
