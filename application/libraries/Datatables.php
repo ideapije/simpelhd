@@ -47,7 +47,8 @@ class Datatables
 				$this->table_name 	= $table_name;
 				$this->sources 		= $this->ci->$table_name->$method_model($param);
 				$this->columns  	= $this->ci->$table_name->column;
-				
+				// printr($this->columns);
+				// printrx($this->sources);
 				
 			}
 		}
@@ -88,7 +89,7 @@ class Datatables
 				}
 			}
 		}
-
+		// printrx($data);
 		
 		$this->ci->load->view('ui_datatables',$data);
 		

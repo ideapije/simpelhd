@@ -248,24 +248,24 @@
 		fclose($fp);
 	}
 
-	function printr_data($data=''){
+	function printr($data=''){
 		echo "<pre>";
 		print_r($data);
 		echo "</pre>";
 	}
-	function printr_data_ex($data=''){
-		echo "<pre>";
-		print_r($data);
-		echo "</pre>";
+	function printrx($data=''){
+		printr($data);
 		die();
+		exit();
 	}
 
-	function vardump_data($data=''){
+	function vd($data=''){
 		echo '<pre>';
 		var_dump($data);
 		echo '</pre>';
 	}
-	function vardump_data_ex($data=''){
-		vardump_data($data);
+	function vdx($data=''){
+		vd($data);
 		die();
+		exit();
 	}
