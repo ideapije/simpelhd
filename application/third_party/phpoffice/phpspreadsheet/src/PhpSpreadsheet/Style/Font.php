@@ -3,9 +3,8 @@
 namespace PhpOffice\PhpSpreadsheet\Style;
 
 use PhpOffice\PhpSpreadsheet\Exception as PhpSpreadsheetException;
-use PhpOffice\PhpSpreadsheet\IComparable;
 
-class Font extends Supervisor implements IComparable
+class Font extends Supervisor
 {
     // Underline types
     const UNDERLINE_NONE = 'none';
@@ -78,6 +77,11 @@ class Font extends Supervisor implements IComparable
     protected $color;
 
     /**
+     * @var int
+     */
+    public $colorIndex;
+
+    /**
      * Create a new Font.
      *
      * @param bool $isSupervisor Flag indicating if this is a supervisor or not
@@ -137,20 +141,21 @@ class Font extends Supervisor implements IComparable
 
     /**
      * Apply styles from array.
+     *
      * <code>
      * $spreadsheet->getActiveSheet()->getStyle('B2')->getFont()->applyFromArray(
-     *        array(
-     *            'name'      => 'Arial',
-     *            'bold'      => TRUE,
-     *            'italic'    => FALSE,
-     *            'underline' => \PhpOffice\PhpSpreadsheet\Style\Font::UNDERLINE_DOUBLE,
-     *            'strikethrough'    => FALSE,
-     *            'color'     => array(
-     *                'rgb' => '808080'
-     *            )
-     *        )
+     *     [
+     *         'name' => 'Arial',
+     *         'bold' => TRUE,
+     *         'italic' => FALSE,
+     *         'underline' => \PhpOffice\PhpSpreadsheet\Style\Font::UNDERLINE_DOUBLE,
+     *         'strikethrough' => FALSE,
+     *         'color' => [
+     *             'rgb' => '808080'
+     *         ]
+     *     ]
      * );
-     * </code>.
+     * </code>
      *
      * @param array $pStyles Array containing style information
      *
@@ -479,8 +484,9 @@ class Font extends Supervisor implements IComparable
         if ($pValue == '') {
             $pValue = false;
         }
+
         if ($this->isSupervisor) {
-            $styleArray = $this->getStyleArray(['strike' => $pValue]);
+            $styleArray = $this->getStyleArray(['strikethrough' => $pValue]);
             $this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($styleArray);
         } else {
             $this->strikethrough = $pValue;

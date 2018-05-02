@@ -2,13 +2,12 @@
 
 namespace PhpOffice\PhpSpreadsheet\Worksheet;
 
-use PhpOffice\PhpSpreadsheet\Calculation;
+use PhpOffice\PhpSpreadsheet\Calculation\Calculation;
 use PhpOffice\PhpSpreadsheet\Calculation\DateTime;
 use PhpOffice\PhpSpreadsheet\Calculation\Functions;
-use PhpOffice\PhpSpreadsheet\Cell;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Exception as PhpSpreadsheetException;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
-use PhpOffice\PhpSpreadsheet\Worksheet;
 
 class AutoFilter
 {
@@ -109,9 +108,9 @@ class AutoFilter
             $this->columns = [];
         } else {
             //    Discard any column rules that are no longer valid within this range
-            list($rangeStart, $rangeEnd) = Cell::rangeBoundaries($this->range);
+            list($rangeStart, $rangeEnd) = Coordinate::rangeBoundaries($this->range);
             foreach ($this->columns as $key => $value) {
-                $colIndex = Cell::columnIndexFromString($key);
+                $colIndex = Coordinate::columnIndexFromString($key);
                 if (($rangeStart[0] > $colIndex) || ($rangeEnd[0] < $colIndex)) {
                     unset($this->columns[$key]);
                 }
@@ -123,8 +122,6 @@ class AutoFilter
 
     /**
      * Get all AutoFilter Columns.
-     *
-     * @throws PhpSpreadsheetException
      *
      * @return AutoFilter\Column[]
      */
@@ -148,8 +145,8 @@ class AutoFilter
             throw new PhpSpreadsheetException('No autofilter range is defined.');
         }
 
-        $columnIndex = Cell::columnIndexFromString($column);
-        list($rangeStart, $rangeEnd) = Cell::rangeBoundaries($this->range);
+        $columnIndex = Coordinate::columnIndexFromString($column);
+        list($rangeStart, $rangeEnd) = Coordinate::rangeBoundaries($this->range);
         if (($rangeStart[0] > $columnIndex) || ($rangeEnd[0] < $columnIndex)) {
             throw new PhpSpreadsheetException('Column is outside of current autofilter range.');
         }
@@ -202,8 +199,8 @@ class AutoFilter
      */
     public function getColumnByOffset($pColumnOffset)
     {
-        list($rangeStart, $rangeEnd) = Cell::rangeBoundaries($this->range);
-        $pColumn = Cell::stringFromColumnIndex($rangeStart[0] + $pColumnOffset - 1);
+        list($rangeStart, $rangeEnd) = Coordinate::rangeBoundaries($this->range);
+        $pColumn = Coordinate::stringFromColumnIndex($rangeStart[0] + $pColumnOffset);
 
         return $this->getColumn($pColumn);
     }
@@ -472,6 +469,7 @@ class AutoFilter
      * @var array
      */
     private static $fromReplace = ['\*', '\?', '~~', '~.*', '~.?'];
+
     private static $toReplace = ['.*', '.', '~', '\*', '\?'];
 
     /**
@@ -624,7 +622,7 @@ class AutoFilter
      */
     public function showHideRows()
     {
-        list($rangeStart, $rangeEnd) = Cell::rangeBoundaries($this->range);
+        list($rangeStart, $rangeEnd) = Coordinate::rangeBoundaries($this->range);
 
         //    The heading row should always be visible
         $this->workSheet->getRowDimension($rangeStart[1])->setVisible(true);
@@ -850,7 +848,7 @@ class AutoFilter
                     $this->{$key} = clone $value;
                 }
             } elseif ((is_array($value)) && ($key == 'columns')) {
-                //    The columns array of \PhpOffice\PhpSpreadsheet\Worksheet\AutoFilter objects
+                //    The columns array of \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet\AutoFilter objects
                 $this->{$key} = [];
                 foreach ($value as $k => $v) {
                     $this->{$key}[$k] = clone $v;

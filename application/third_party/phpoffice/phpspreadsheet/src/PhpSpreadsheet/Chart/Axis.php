@@ -212,7 +212,7 @@ class Axis extends Properties
      */
     public function setAxisOrientation($orientation)
     {
-        $this->orientation = (string) $orientation;
+        $this->axisOptions['orientation'] = (string) $orientation;
     }
 
     /**
@@ -462,7 +462,9 @@ class Axis extends Properties
     /**
      * Get Shadow Property.
      *
-     * @param mixed $elements
+     * @param string|string[] $elements
+     *
+     * @return null|array|int|string
      */
     public function getShadowProperty($elements)
     {

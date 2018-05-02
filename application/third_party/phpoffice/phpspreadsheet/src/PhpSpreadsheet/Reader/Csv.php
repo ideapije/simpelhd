@@ -2,11 +2,11 @@
 
 namespace PhpOffice\PhpSpreadsheet\Reader;
 
-use PhpOffice\PhpSpreadsheet\Cell;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Shared\StringHelper;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
-class Csv extends BaseReader implements IReader
+class Csv extends BaseReader
 {
     /**
      * Input encoding.
@@ -62,6 +62,8 @@ class Csv extends BaseReader implements IReader
      * Set input encoding.
      *
      * @param string $pValue Input encoding, eg: 'UTF-8'
+     *
+     * @return Csv
      */
     public function setInputEncoding($pValue)
     {
@@ -155,6 +157,10 @@ class Csv extends BaseReader implements IReader
         // Count how many times each of the potential delimiters appears in each line
         $numberLines = 0;
         while (($line = fgets($this->fileHandle)) !== false && (++$numberLines < 1000)) {
+            // Drop everything that is enclosed to avoid counting false positives in enclosures
+            $enclosure = preg_quote($this->enclosure, '/');
+            $line = preg_replace('/(' . $enclosure . '.*' . $enclosure . ')/U', '', $line);
+
             $countLine = [];
             for ($i = strlen($line) - 1; $i >= 0; --$i) {
                 $char = $line[$i];
@@ -223,6 +229,8 @@ class Csv extends BaseReader implements IReader
      * @param string $pFilename
      *
      * @throws Exception
+     *
+     * @return array
      */
     public function listWorksheetInfo($pFilename)
     {
@@ -251,7 +259,7 @@ class Csv extends BaseReader implements IReader
             $worksheetInfo[0]['lastColumnIndex'] = max($worksheetInfo[0]['lastColumnIndex'], count($rowData) - 1);
         }
 
-        $worksheetInfo[0]['lastColumnLetter'] = Cell::stringFromColumnIndex($worksheetInfo[0]['lastColumnIndex']);
+        $worksheetInfo[0]['lastColumnLetter'] = Coordinate::stringFromColumnIndex($worksheetInfo[0]['lastColumnIndex'] + 1);
         $worksheetInfo[0]['totalColumns'] = $worksheetInfo[0]['lastColumnIndex'] + 1;
 
         // Close file
@@ -427,6 +435,8 @@ class Csv extends BaseReader implements IReader
      * Set Contiguous.
      *
      * @param bool $contiguous
+     *
+     * @return Csv
      */
     public function setContiguous($contiguous)
     {
@@ -453,8 +463,6 @@ class Csv extends BaseReader implements IReader
      *
      * @param string $pFilename
      *
-     * @throws Exception
-     *
      * @return bool
      */
     public function canRead($pFilename)
@@ -468,6 +476,13 @@ class Csv extends BaseReader implements IReader
 
         fclose($this->fileHandle);
 
-        return true;
+        $type = mime_content_type($pFilename);
+        $supportedTypes = [
+            'text/csv',
+            'text/plain',
+            'inode/x-empty',
+        ];
+
+        return in_array($type, $supportedTypes, true);
     }
 }

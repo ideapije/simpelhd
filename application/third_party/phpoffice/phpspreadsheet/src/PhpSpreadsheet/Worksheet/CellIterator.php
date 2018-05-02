@@ -4,21 +4,14 @@ namespace PhpOffice\PhpSpreadsheet\Worksheet;
 
 use PhpOffice\PhpSpreadsheet\Exception as PhpSpreadsheetException;
 
-abstract class CellIterator
+abstract class CellIterator implements \Iterator
 {
     /**
      * Worksheet to iterate.
      *
-     * @var \PhpOffice\PhpSpreadsheet\Worksheet
+     * @var Worksheet
      */
-    protected $subject;
-
-    /**
-     * Current iterator position.
-     *
-     * @var mixed
-     */
-    protected $position;
+    protected $worksheet;
 
     /**
      * Iterate only existing cells.
@@ -32,7 +25,7 @@ abstract class CellIterator
      */
     public function __destruct()
     {
-        unset($this->subject);
+        unset($this->worksheet);
     }
 
     /**

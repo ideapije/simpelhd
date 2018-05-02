@@ -2,6 +2,11 @@
 
 namespace PhpOffice\PhpSpreadsheet;
 
+use PhpOffice\PhpSpreadsheet\Calculation\Calculation;
+use PhpOffice\PhpSpreadsheet\Style\Style;
+use PhpOffice\PhpSpreadsheet\Worksheet\Iterator;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+
 class Spreadsheet
 {
     /**
@@ -82,15 +87,16 @@ class Spreadsheet
     private $hasMacros = false;
 
     /**
-     * macrosCode : all macros code (the vbaProject.bin file, this include form, code,  etc.), null if no macro.
+     * macrosCode : all macros code as binary data (the vbaProject.bin file, this include form, code,  etc.), null if no macro.
      *
-     * @var binary
+     * @var string
      */
     private $macrosCode;
+
     /**
-     * macrosCertificate : if macros are signed, contains vbaProjectSignature.bin file, null if not signed.
+     * macrosCertificate : if macros are signed, contains binary data vbaProjectSignature.bin file, null if not signed.
      *
-     * @var binary
+     * @var string
      */
     private $macrosCertificate;
 
@@ -253,17 +259,21 @@ class Spreadsheet
     /**
      * return the extension of a filename. Internal use for a array_map callback (php<5.3 don't like lambda function).
      *
-     * @param mixed $ThePath
+     * @param mixed $path
+     *
+     * @return string
      */
-    private function getExtensionOnly($ThePath)
+    private function getExtensionOnly($path)
     {
-        return pathinfo($ThePath, PATHINFO_EXTENSION);
+        return pathinfo($path, PATHINFO_EXTENSION);
     }
 
     /**
      * retrieve Binaries Ribbon Objects.
      *
-     * @param mixed $what
+     * @param string $what
+     *
+     * @return null|array
      */
     public function getRibbonBinObjects($what = 'all')
     {
@@ -272,6 +282,7 @@ class Spreadsheet
         switch ($what) {
             case 'all':
                 return $this->ribbonBinObjects;
+
                 break;
             case 'names':
             case 'data':
@@ -858,11 +869,11 @@ class Spreadsheet
     /**
      * Get worksheet iterator.
      *
-     * @return Worksheet\Iterator
+     * @return Iterator
      */
     public function getWorksheetIterator()
     {
-        return new Worksheet\Iterator($this);
+        return new Iterator($this);
     }
 
     /**

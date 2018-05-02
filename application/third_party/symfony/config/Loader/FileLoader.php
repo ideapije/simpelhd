@@ -25,21 +25,12 @@ use Symfony\Component\Config\Resource\GlobResource;
  */
 abstract class FileLoader extends Loader
 {
-    /**
-     * @var array
-     */
     protected static $loading = array();
 
-    /**
-     * @var FileLocatorInterface
-     */
     protected $locator;
 
     private $currentDir;
 
-    /**
-     * @param FileLocatorInterface $locator A FileLocatorInterface instance
-     */
     public function __construct(FileLocatorInterface $locator)
     {
         $this->locator = $locator;
@@ -102,7 +93,7 @@ abstract class FileLoader extends Loader
     /**
      * @internal
      */
-    protected function glob($pattern, $recursive, &$resource = null, $ignoreErrors = false)
+    protected function glob(string $pattern, bool $recursive, &$resource = null, bool $ignoreErrors = false)
     {
         if (strlen($pattern) === $i = strcspn($pattern, '*?{[')) {
             $prefix = $pattern;
@@ -136,7 +127,7 @@ abstract class FileLoader extends Loader
         }
     }
 
-    private function doImport($resource, $type = null, $ignoreErrors = false, $sourceResource = null)
+    private function doImport($resource, $type = null, bool $ignoreErrors = false, $sourceResource = null)
     {
         try {
             $loader = $this->resolve($resource, $type);

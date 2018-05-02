@@ -3,9 +3,8 @@
 namespace PhpOffice\PhpSpreadsheet\Style;
 
 use PhpOffice\PhpSpreadsheet\Exception as PhpSpreadsheetException;
-use PhpOffice\PhpSpreadsheet\IComparable;
 
-class Protection extends Supervisor implements IComparable
+class Protection extends Supervisor
 {
     /** Protection styles */
     const PROTECTION_INHERIT = 'inherit';
@@ -73,14 +72,15 @@ class Protection extends Supervisor implements IComparable
 
     /**
      * Apply styles from array.
+     *
      * <code>
      * $spreadsheet->getActiveSheet()->getStyle('B2')->getLocked()->applyFromArray(
-     *        array(
-     *            'locked' => TRUE,
-     *            'hidden' => FALSE
-     *        )
+     *     [
+     *         'locked' => TRUE,
+     *         'hidden' => FALSE
+     *     ]
      * );
-     * </code>.
+     * </code>
      *
      * @param array $pStyles Array containing style information
      *

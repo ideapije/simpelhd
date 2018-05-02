@@ -2,9 +2,7 @@
 
 namespace PhpOffice\PhpSpreadsheet\Worksheet;
 
-use PhpOffice\PhpSpreadsheet\IComparable;
-
-class MemoryDrawing extends BaseDrawing implements IComparable
+class MemoryDrawing extends BaseDrawing
 {
     // Rendering functions
     const RENDERING_DEFAULT = 'imagepng';
@@ -167,20 +165,5 @@ class MemoryDrawing extends BaseDrawing implements IComparable
             parent::getHashCode() .
             __CLASS__
         );
-    }
-
-    /**
-     * Implement PHP __clone to create a deep clone, not just a shallow copy.
-     */
-    public function __clone()
-    {
-        $vars = get_object_vars($this);
-        foreach ($vars as $key => $value) {
-            if (is_object($value)) {
-                $this->$key = unserialize(serialize($value));
-            } else {
-                $this->$key = $value;
-            }
-        }
     }
 }

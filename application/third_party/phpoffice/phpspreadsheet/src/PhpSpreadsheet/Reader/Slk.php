@@ -2,13 +2,13 @@
 
 namespace PhpOffice\PhpSpreadsheet\Reader;
 
-use PhpOffice\PhpSpreadsheet\Calculation;
-use PhpOffice\PhpSpreadsheet\Cell;
+use PhpOffice\PhpSpreadsheet\Calculation\Calculation;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Shared\StringHelper;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 
-class Slk extends BaseReader implements IReader
+class Slk extends BaseReader
 {
     /**
      * Input encoding.
@@ -51,8 +51,6 @@ class Slk extends BaseReader implements IReader
      *
      * @param string $pFilename
      *
-     * @throws Exception
-     *
      * @return bool
      */
     public function canRead($pFilename)
@@ -84,6 +82,8 @@ class Slk extends BaseReader implements IReader
      * Set input encoding.
      *
      * @param string $pValue Input encoding, eg: 'ANSI'
+     *
+     * @return Slk
      */
     public function setInputEncoding($pValue)
     {
@@ -108,6 +108,8 @@ class Slk extends BaseReader implements IReader
      * @param string $pFilename
      *
      * @throws Exception
+     *
+     * @return array
      */
     public function listWorksheetInfo($pFilename)
     {
@@ -125,9 +127,6 @@ class Slk extends BaseReader implements IReader
         $worksheetInfo[0]['lastColumnIndex'] = 0;
         $worksheetInfo[0]['totalRows'] = 0;
         $worksheetInfo[0]['totalColumns'] = 0;
-
-        // Loop through file
-        $rowData = [];
 
         // loop through one row (line) at a time in the file
         $rowIndex = 0;
@@ -164,7 +163,7 @@ class Slk extends BaseReader implements IReader
             }
         }
 
-        $worksheetInfo[0]['lastColumnLetter'] = Cell::stringFromColumnIndex($worksheetInfo[0]['lastColumnIndex']);
+        $worksheetInfo[0]['lastColumnLetter'] = Coordinate::stringFromColumnIndex($worksheetInfo[0]['lastColumnIndex'] + 1);
         $worksheetInfo[0]['totalColumns'] = $worksheetInfo[0]['lastColumnIndex'] + 1;
 
         // Close file
@@ -221,7 +220,6 @@ class Slk extends BaseReader implements IReader
         $toFormats = ['-', ' '];
 
         // Loop through file
-        $rowData = [];
         $column = $row = '';
 
         // loop through one row (line) at a time in the file
@@ -254,7 +252,8 @@ class Slk extends BaseReader implements IReader
                             break;
                         case 'S':
                             $styleSettings = substr($rowDatum, 1);
-                            for ($i = 0; $i < strlen($styleSettings); ++$i) {
+                            $iMax = strlen($styleSettings);
+                            for ($i = 0; $i < $iMax; ++$i) {
                                 switch ($styleSettings[$i]) {
                                     case 'I':
                                         $formatArray['font']['italic'] = true;
@@ -287,7 +286,7 @@ class Slk extends BaseReader implements IReader
                     }
                 }
                 $this->formats['P' . $this->format++] = $formatArray;
-                //    Read cell value data
+            //    Read cell value data
             } elseif ($dataType == 'C') {
                 $hasCalculatedValue = false;
                 $cellData = $cellDataFormula = '';
@@ -341,7 +340,7 @@ class Slk extends BaseReader implements IReader
                                         if ($columnReference[0] == '[') {
                                             $columnReference = $column + trim($columnReference, '[]');
                                         }
-                                        $A1CellReference = Cell::stringFromColumnIndex($columnReference - 1) . $rowReference;
+                                        $A1CellReference = Coordinate::stringFromColumnIndex($columnReference) . $rowReference;
 
                                         $value = substr_replace($value, $A1CellReference, $cellReference[0][1], strlen($cellReference[0][0]));
                                     }
@@ -355,7 +354,7 @@ class Slk extends BaseReader implements IReader
                             break;
                     }
                 }
-                $columnLetter = Cell::stringFromColumnIndex($column - 1);
+                $columnLetter = Coordinate::stringFromColumnIndex($column);
                 $cellData = Calculation::unwrapResult($cellData);
 
                 // Set cell value
@@ -390,7 +389,8 @@ class Slk extends BaseReader implements IReader
                             break;
                         case 'S':
                             $styleSettings = substr($rowDatum, 1);
-                            for ($i = 0; $i < strlen($styleSettings); ++$i) {
+                            $iMax = strlen($styleSettings);
+                            for ($i = 0; $i < $iMax; ++$i) {
                                 switch ($styleSettings[$i]) {
                                     case 'I':
                                         $styleData['font']['italic'] = true;
@@ -423,22 +423,22 @@ class Slk extends BaseReader implements IReader
                     }
                 }
                 if (($formatStyle > '') && ($column > '') && ($row > '')) {
-                    $columnLetter = Cell::stringFromColumnIndex($column - 1);
+                    $columnLetter = Coordinate::stringFromColumnIndex($column);
                     if (isset($this->formats[$formatStyle])) {
                         $spreadsheet->getActiveSheet()->getStyle($columnLetter . $row)->applyFromArray($this->formats[$formatStyle]);
                     }
                 }
                 if ((!empty($styleData)) && ($column > '') && ($row > '')) {
-                    $columnLetter = Cell::stringFromColumnIndex($column - 1);
+                    $columnLetter = Coordinate::stringFromColumnIndex($column);
                     $spreadsheet->getActiveSheet()->getStyle($columnLetter . $row)->applyFromArray($styleData);
                 }
                 if ($columnWidth > '') {
                     if ($startCol == $endCol) {
-                        $startCol = Cell::stringFromColumnIndex($startCol - 1);
+                        $startCol = Coordinate::stringFromColumnIndex($startCol);
                         $spreadsheet->getActiveSheet()->getColumnDimension($startCol)->setWidth($columnWidth);
                     } else {
-                        $startCol = Cell::stringFromColumnIndex($startCol - 1);
-                        $endCol = Cell::stringFromColumnIndex($endCol - 1);
+                        $startCol = Coordinate::stringFromColumnIndex($startCol);
+                        $endCol = Coordinate::stringFromColumnIndex($endCol);
                         $spreadsheet->getActiveSheet()->getColumnDimension($startCol)->setWidth($columnWidth);
                         do {
                             $spreadsheet->getActiveSheet()->getColumnDimension(++$startCol)->setWidth($columnWidth);
@@ -485,7 +485,7 @@ class Slk extends BaseReader implements IReader
      *
      * @param int $pValue Sheet index
      *
-     * @return SYLK
+     * @return Slk
      */
     public function setSheetIndex($pValue)
     {

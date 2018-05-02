@@ -4,11 +4,11 @@ namespace PhpOffice\PhpSpreadsheet\Reader;
 
 use DateTime;
 use DateTimeZone;
-use PhpOffice\PhpSpreadsheet\Calculation;
-use PhpOffice\PhpSpreadsheet\Cell;
+use PhpOffice\PhpSpreadsheet\Calculation\Calculation;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Document\Properties;
-use PhpOffice\PhpSpreadsheet\RichText;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use PhpOffice\PhpSpreadsheet\Settings;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Shared\File;
@@ -17,15 +17,8 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use XMLReader;
 use ZipArchive;
 
-class Ods extends BaseReader implements IReader
+class Ods extends BaseReader
 {
-    /**
-     * Formats.
-     *
-     * @var array
-     */
-    private $styles = [];
-
     /**
      * Create a new Ods Reader instance.
      */
@@ -160,7 +153,7 @@ class Ods extends BaseReader implements IReader
         }
 
         $xml = new XMLReader();
-        $res = $xml->xml(
+        $xml->xml(
             $this->securityScanFile('zip://' . realpath($pFilename) . '#content.xml'),
             null,
             Settings::getLibXmlLoaderOptions()
@@ -213,7 +206,7 @@ class Ods extends BaseReader implements IReader
                                     }
                                 } elseif ($xml->name == 'table:covered-table-cell' && $xml->nodeType == XMLReader::ELEMENT) {
                                     $mergeSize = $xml->getAttribute('table:number-columns-repeated');
-                                    $currCells += $mergeSize;
+                                    $currCells += (int) $mergeSize;
                                     $xml->read();
                                 }
                             } while ($xml->name != 'table:table-row');
@@ -222,7 +215,7 @@ class Ods extends BaseReader implements IReader
 
                     $tmpInfo['totalColumns'] = max($tmpInfo['totalColumns'], $currCells);
                     $tmpInfo['lastColumnIndex'] = $tmpInfo['totalColumns'] - 1;
-                    $tmpInfo['lastColumnLetter'] = Cell::stringFromColumnIndex($tmpInfo['lastColumnIndex']);
+                    $tmpInfo['lastColumnLetter'] = Coordinate::stringFromColumnIndex($tmpInfo['lastColumnIndex'] + 1);
                     $worksheetInfo[] = $tmpInfo;
                 }
             }
@@ -247,20 +240,6 @@ class Ods extends BaseReader implements IReader
 
         // Load into this instance
         return $this->loadIntoExisting($pFilename, $spreadsheet);
-    }
-
-    private static function identifyFixedStyleValue($styleList, &$styleAttributeValue)
-    {
-        $styleAttributeValue = strtolower($styleAttributeValue);
-        foreach ($styleList as $style) {
-            if ($styleAttributeValue == strtolower($style)) {
-                $styleAttributeValue = $style;
-
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -681,7 +660,7 @@ class Ods extends BaseReader implements IReader
                                                 $rID = $rowID + $rowAdjust;
 
                                                 $cell = $spreadsheet->getActiveSheet()
-                                                            ->getCell($columnID . $rID);
+                                                    ->getCell($columnID . $rID);
 
                                                 // Set value
                                                 if ($hasCalculatedValue) {
@@ -717,18 +696,18 @@ class Ods extends BaseReader implements IReader
                                 }
 
                                 // Merged cells
-                                if ($childNode->hasAttributeNS($tableNs, 'number-columns-spanned')
-                                    || $childNode->hasAttributeNS($tableNs, 'number-rows-spanned')
+                                if ($cellData->hasAttributeNS($tableNs, 'number-columns-spanned')
+                                    || $cellData->hasAttributeNS($tableNs, 'number-rows-spanned')
                                 ) {
                                     if (($type !== DataType::TYPE_NULL) || (!$this->readDataOnly)) {
                                         $columnTo = $columnID;
 
                                         if ($cellData->hasAttributeNS($tableNs, 'number-columns-spanned')) {
-                                            $columnIndex = Cell::columnIndexFromString($columnID);
+                                            $columnIndex = Coordinate::columnIndexFromString($columnID);
                                             $columnIndex += (int) $cellData->getAttributeNS($tableNs, 'number-columns-spanned');
                                             $columnIndex -= 2;
 
-                                            $columnTo = Cell::stringFromColumnIndex($columnIndex);
+                                            $columnTo = Coordinate::stringFromColumnIndex($columnIndex + 1);
                                         }
 
                                         $rowTo = $rowID;

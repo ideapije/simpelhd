@@ -76,11 +76,11 @@ guarantee that the title is unique.
 
 Alternatively, you can instantiate a new worksheet (setting the title to
 whatever you choose) and then insert it into your workbook using the
-addSheet() method.
+`addSheet()` method.
 
 ``` php
 // Create a new worksheet called "My Data"
-$myWorkSheet = new \PhpOffice\PhpSpreadsheet\Worksheet($spreadsheet, 'My Data');
+$myWorkSheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, 'My Data');
 
 // Attach the "My Data" worksheet as the first worksheet in the Spreadsheet object
 $spreadsheet->addSheet($myWorkSheet, 0);
@@ -97,7 +97,7 @@ insert the clone into the workbook.
 
 ``` php
 $clonedWorksheet = clone $spreadsheet->getSheetByName('Worksheet 1');
-$clonedWorksheet->setTitle('Copy of Worksheet 1')
+$clonedWorksheet->setTitle('Copy of Worksheet 1');
 $spreadsheet->addSheet($clonedWorksheet);
 ```
 

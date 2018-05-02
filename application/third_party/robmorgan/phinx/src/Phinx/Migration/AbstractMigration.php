@@ -28,8 +28,8 @@
  */
 namespace Phinx\Migration;
 
-use Phinx\Db\Table;
 use Phinx\Db\Adapter\AdapterInterface;
+use Phinx\Db\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -51,17 +51,17 @@ abstract class AbstractMigration implements MigrationInterface
     protected $version;
 
     /**
-     * @var AdapterInterface
+     * @var \Phinx\Db\Adapter\AdapterInterface
      */
     protected $adapter;
 
     /**
-     * @var OutputInterface
+     * @var \Symfony\Component\Console\Output\OutputInterface
      */
     protected $output;
 
     /**
-     * @var InputInterface
+     * @var \Symfony\Component\Console\Input\InputInterface
      */
     protected $input;
 
@@ -76,16 +76,16 @@ abstract class AbstractMigration implements MigrationInterface
      * Class Constructor.
      *
      * @param int $version Migration Version
-     * @param InputInterface|null $input
-     * @param OutputInterface|null $output
+     * @param \Symfony\Component\Console\Input\InputInterface|null $input
+     * @param \Symfony\Component\Console\Output\OutputInterface|null $output
      */
     final public function __construct($version, InputInterface $input = null, OutputInterface $output = null)
     {
         $this->version = $version;
-        if (!is_null($input)){
+        if (!is_null($input)) {
             $this->setInput($input);
         }
-        if (!is_null($output)){
+        if (!is_null($output)) {
             $this->setOutput($output);
         }
 
@@ -121,6 +121,7 @@ abstract class AbstractMigration implements MigrationInterface
     public function setAdapter(AdapterInterface $adapter)
     {
         $this->adapter = $adapter;
+
         return $this;
     }
 
@@ -138,6 +139,7 @@ abstract class AbstractMigration implements MigrationInterface
     public function setInput(InputInterface $input)
     {
         $this->input = $input;
+
         return $this;
     }
 
@@ -155,6 +157,7 @@ abstract class AbstractMigration implements MigrationInterface
     public function setOutput(OutputInterface $output)
     {
         $this->output = $output;
+
         return $this;
     }
 
@@ -180,6 +183,7 @@ abstract class AbstractMigration implements MigrationInterface
     public function setVersion($version)
     {
         $this->version = $version;
+
         return $this;
     }
 
@@ -194,9 +198,10 @@ abstract class AbstractMigration implements MigrationInterface
     /**
      * {@inheritdoc}
      */
-    public function setMigratingUp($goingUp)
+    public function setMigratingUp($isMigratingUp)
     {
-        $this->isMigratingUp = $goingUp;
+        $this->isMigratingUp = $isMigratingUp;
+
         return $this;
     }
 
@@ -247,7 +252,7 @@ abstract class AbstractMigration implements MigrationInterface
     {
         // convert to table object
         if (is_string($table)) {
-            $table = new Table($table, array(), $this->getAdapter());
+            $table = new Table($table, [], $this->getAdapter());
         }
         $table->insert($data)->save();
     }
@@ -279,7 +284,7 @@ abstract class AbstractMigration implements MigrationInterface
     /**
      * {@inheritdoc}
      */
-    public function table($tableName, $options = array())
+    public function table($tableName, $options = [])
     {
         return new Table($tableName, $options, $this->getAdapter());
     }

@@ -3,10 +3,24 @@
 namespace PhpOffice\PhpSpreadsheet\Writer\Pdf;
 
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
-use PhpOffice\PhpSpreadsheet\Writer\IWriter;
+use PhpOffice\PhpSpreadsheet\Writer\Pdf;
 
-class TcPDF extends Core implements IWriter
+class Tcpdf extends Pdf
 {
+    /**
+     * Gets the implementation of external PDF library that should be used.
+     *
+     * @param string $orientation Page orientation
+     * @param string $unit Unit measure
+     * @param string $paperSize Paper size
+     *
+     * @return \TCPDF implementation
+     */
+    protected function createExternalWriterInstance($orientation, $unit, $paperSize)
+    {
+        return new \TCPDF($orientation, $unit, $paperSize);
+    }
+
     /**
      * Save Spreadsheet to file.
      *
@@ -50,7 +64,7 @@ class TcPDF extends Core implements IWriter
         }
 
         //  Create PDF
-        $pdf = new \TCPDF($orientation, 'pt', $paperSize);
+        $pdf = $this->createExternalWriterInstance($orientation, 'pt', $paperSize);
         $pdf->setFontSubsetting(false);
         //    Set margins, converting inches to points (using 72 dpi)
         $pdf->SetMargins($printMargins->getLeft() * 72, $printMargins->getTop() * 72, $printMargins->getRight() * 72);

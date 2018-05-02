@@ -3,9 +3,8 @@
 namespace PhpOffice\PhpSpreadsheet\Style;
 
 use PhpOffice\PhpSpreadsheet\Exception as PhpSpreadsheetException;
-use PhpOffice\PhpSpreadsheet\IComparable;
 
-class Color extends Supervisor implements IComparable
+class Color extends Supervisor
 {
     // Colors
     const COLOR_BLACK = 'FF000000';
@@ -34,13 +33,6 @@ class Color extends Supervisor implements IComparable
     protected $argb;
 
     /**
-     * Parent property name.
-     *
-     * @var string
-     */
-    protected $parentPropertyName;
-
-    /**
      * Create a new Color.
      *
      * @param string $pARGB ARGB value for the colour
@@ -60,22 +52,6 @@ class Color extends Supervisor implements IComparable
         if (!$isConditional) {
             $this->argb = $pARGB;
         }
-    }
-
-    /**
-     * Bind parent. Only used for supervisor.
-     *
-     * @param mixed $parent
-     * @param string $parentPropertyName
-     *
-     * @return Color
-     */
-    public function bindParent($parent, $parentPropertyName = null)
-    {
-        $this->parent = $parent;
-        $this->parentPropertyName = $parentPropertyName;
-
-        return $this;
     }
 
     /**
@@ -110,9 +86,10 @@ class Color extends Supervisor implements IComparable
 
     /**
      * Apply styles from array.
+     *
      * <code>
-     * $spreadsheet->getActiveSheet()->getStyle('B2')->getFont()->getColor()->applyFromArray( array('rgb' => '808080') );
-     * </code>.
+     * $spreadsheet->getActiveSheet()->getStyle('B2')->getFont()->getColor()->applyFromArray(['rgb' => '808080']);
+     * </code>
      *
      * @param array $pStyles Array containing style information
      *
@@ -210,8 +187,6 @@ class Color extends Supervisor implements IComparable
 
     /**
      * Get a specified colour component of an RGB value.
-     *
-     * @private
      *
      * @param string $RGB The colour as an RGB value (e.g. FF00CCCC or CCDDEE
      * @param int $offset Position within the RGB value to extract

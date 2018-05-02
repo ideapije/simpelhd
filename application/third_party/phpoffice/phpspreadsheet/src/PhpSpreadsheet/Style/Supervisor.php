@@ -2,7 +2,11 @@
 
 namespace PhpOffice\PhpSpreadsheet\Style;
 
-abstract class Supervisor
+use PhpOffice\PhpSpreadsheet\IComparable;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+
+abstract class Supervisor implements IComparable
 {
     /**
      * Supervisor?
@@ -14,9 +18,16 @@ abstract class Supervisor
     /**
      * Parent. Only used for supervisor.
      *
-     * @var \PhpOffice\PhpSpreadsheet\Style
+     * @var Spreadsheet|Style
      */
     protected $parent;
+
+    /**
+     * Parent property name.
+     *
+     * @var null|string
+     */
+    protected $parentPropertyName;
 
     /**
      * Create a new Supervisor.
@@ -34,14 +45,15 @@ abstract class Supervisor
     /**
      * Bind parent. Only used for supervisor.
      *
-     * @param Style $parent
-     * @param null|mixed $parentPropertyName
+     * @param Spreadsheet|Style $parent
+     * @param null|string $parentPropertyName
      *
      * @return Supervisor
      */
     public function bindParent($parent, $parentPropertyName = null)
     {
         $this->parent = $parent;
+        $this->parentPropertyName = $parentPropertyName;
 
         return $this;
     }
@@ -59,7 +71,7 @@ abstract class Supervisor
     /**
      * Get the currently active sheet. Only used for supervisor.
      *
-     * @return \PhpOffice\PhpSpreadsheet\Worksheet
+     * @return Worksheet
      */
     public function getActiveSheet()
     {

@@ -6,7 +6,7 @@ use DOMDocument;
 use DOMElement;
 use DOMNode;
 use DOMText;
-use PhpOffice\PhpSpreadsheet\RichText;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Style\Font;
 
@@ -533,14 +533,21 @@ class Html
     ];
 
     protected $face;
+
     protected $size;
+
     protected $color;
 
     protected $bold = false;
+
     protected $italic = false;
+
     protected $underline = false;
+
     protected $superscript = false;
+
     protected $subscript = false;
+
     protected $strikethrough = false;
 
     protected $startTagCallbacks = [
@@ -581,6 +588,9 @@ class Html
 
     protected $stringData = '';
 
+    /**
+     * @var RichText
+     */
     protected $richTextObject;
 
     protected function initialise()
@@ -601,7 +611,7 @@ class Html
         $dom = new DOMDocument();
         //    Load the HTML file into the DOM object
         //  Note the use of error suppression, because typically this will be an html fragment, so not fully valid markup
-        $loaded = @$dom->loadHTML($html);
+        @$dom->loadHTML($html);
 
         //    Discard excess white space
         $dom->preserveWhiteSpace = false;

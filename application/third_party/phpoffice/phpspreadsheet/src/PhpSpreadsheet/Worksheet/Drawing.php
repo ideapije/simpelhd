@@ -3,9 +3,8 @@
 namespace PhpOffice\PhpSpreadsheet\Worksheet;
 
 use PhpOffice\PhpSpreadsheet\Exception as PhpSpreadsheetException;
-use PhpOffice\PhpSpreadsheet\IComparable;
 
-class Drawing extends BaseDrawing implements IComparable
+class Drawing extends BaseDrawing
 {
     /**
      * Path.
@@ -113,20 +112,5 @@ class Drawing extends BaseDrawing implements IComparable
             parent::getHashCode() .
             __CLASS__
         );
-    }
-
-    /**
-     * Implement PHP __clone to create a deep clone, not just a shallow copy.
-     */
-    public function __clone()
-    {
-        $vars = get_object_vars($this);
-        foreach ($vars as $key => $value) {
-            if (is_object($value)) {
-                $this->$key = clone $value;
-            } else {
-                $this->$key = $value;
-            }
-        }
     }
 }

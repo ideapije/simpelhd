@@ -3,9 +3,8 @@
 namespace PhpOffice\PhpSpreadsheet\Style;
 
 use PhpOffice\PhpSpreadsheet\Exception as PhpSpreadsheetException;
-use PhpOffice\PhpSpreadsheet\IComparable;
 
-class Fill extends Supervisor implements IComparable
+class Fill extends Supervisor
 {
     // Fill types
     const FILL_NONE = 'none';
@@ -29,6 +28,16 @@ class Fill extends Supervisor implements IComparable
     const FILL_PATTERN_LIGHTUP = 'lightUp';
     const FILL_PATTERN_LIGHTVERTICAL = 'lightVertical';
     const FILL_PATTERN_MEDIUMGRAY = 'mediumGray';
+
+    /**
+     * @var int
+     */
+    public $startcolorIndex;
+
+    /**
+     * @var int
+     */
+    public $endcolorIndex;
 
     /**
      * Fill type.
@@ -112,20 +121,21 @@ class Fill extends Supervisor implements IComparable
 
     /**
      * Apply styles from array.
+     *
      * <code>
      * $spreadsheet->getActiveSheet()->getStyle('B2')->getFill()->applyFromArray(
-     *        array(
-     *            'fillType'       => Fill::FILL_GRADIENT_LINEAR,
-     *            'rotation'   => 0,
-     *            'startColor' => array(
-     *                'rgb' => '000000'
-     *            ),
-     *            'endColor'   => array(
-     *                'argb' => 'FFFFFFFF'
-     *            )
-     *        )
+     *     [
+     *         'fillType' => Fill::FILL_GRADIENT_LINEAR,
+     *         'rotation' => 0,
+     *         'startColor' => [
+     *             'rgb' => '000000'
+     *         ],
+     *         'endColor' => [
+     *             'argb' => 'FFFFFFFF'
+     *         ]
+     *     ]
      * );
-     * </code>.
+     * </code>
      *
      * @param array $pStyles Array containing style information
      *

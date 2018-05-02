@@ -2,10 +2,12 @@
 
 namespace PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-use PhpOffice\PhpSpreadsheet\Cell;
-use PhpOffice\PhpSpreadsheet\RichText;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+use PhpOffice\PhpSpreadsheet\RichText\Run;
 use PhpOffice\PhpSpreadsheet\Shared\StringHelper;
 use PhpOffice\PhpSpreadsheet\Shared\XMLWriter;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Exception as WriterException;
 
 class StringTable extends WriterPart
@@ -16,49 +18,43 @@ class StringTable extends WriterPart
      * @param Worksheet $pSheet Worksheet
      * @param string[] $pExistingTable Existing table to eventually merge with
      *
-     * @throws WriterException
-     *
      * @return string[] String table for worksheet
      */
-    public function createStringTable($pSheet = null, $pExistingTable = null)
+    public function createStringTable(Worksheet $pSheet, $pExistingTable = null)
     {
-        if ($pSheet !== null) {
-            // Create string lookup table
-            $aStringTable = [];
-            $cellCollection = null;
-            $aFlippedStringTable = null; // For faster lookup
+        // Create string lookup table
+        $aStringTable = [];
+        $cellCollection = null;
+        $aFlippedStringTable = null; // For faster lookup
 
-            // Is an existing table given?
-            if (($pExistingTable !== null) && is_array($pExistingTable)) {
-                $aStringTable = $pExistingTable;
-            }
-
-            // Fill index array
-            $aFlippedStringTable = $this->flipStringTable($aStringTable);
-
-            // Loop through cells
-            foreach ($pSheet->getCoordinates() as $coordinate) {
-                $cell = $pSheet->getCell($coordinate);
-                $cellValue = $cell->getValue();
-                if (!is_object($cellValue) &&
-                    ($cellValue !== null) &&
-                    $cellValue !== '' &&
-                    !isset($aFlippedStringTable[$cellValue]) &&
-                    ($cell->getDataType() == Cell\DataType::TYPE_STRING || $cell->getDataType() == Cell\DataType::TYPE_STRING2 || $cell->getDataType() == Cell\DataType::TYPE_NULL)) {
-                    $aStringTable[] = $cellValue;
-                    $aFlippedStringTable[$cellValue] = true;
-                } elseif ($cellValue instanceof RichText &&
-                          ($cellValue !== null) &&
-                          !isset($aFlippedStringTable[$cellValue->getHashCode()])) {
-                    $aStringTable[] = $cellValue;
-                    $aFlippedStringTable[$cellValue->getHashCode()] = true;
-                }
-            }
-
-            return $aStringTable;
+        // Is an existing table given?
+        if (($pExistingTable !== null) && is_array($pExistingTable)) {
+            $aStringTable = $pExistingTable;
         }
 
-        throw new WriterException('Invalid Worksheet object passed.');
+        // Fill index array
+        $aFlippedStringTable = $this->flipStringTable($aStringTable);
+
+        // Loop through cells
+        foreach ($pSheet->getCoordinates() as $coordinate) {
+            $cell = $pSheet->getCell($coordinate);
+            $cellValue = $cell->getValue();
+            if (!is_object($cellValue) &&
+                ($cellValue !== null) &&
+                $cellValue !== '' &&
+                !isset($aFlippedStringTable[$cellValue]) &&
+                ($cell->getDataType() == DataType::TYPE_STRING || $cell->getDataType() == DataType::TYPE_STRING2 || $cell->getDataType() == DataType::TYPE_NULL)) {
+                $aStringTable[] = $cellValue;
+                $aFlippedStringTable[$cellValue] = true;
+            } elseif ($cellValue instanceof RichText &&
+                ($cellValue !== null) &&
+                !isset($aFlippedStringTable[$cellValue->getHashCode()])) {
+                $aStringTable[] = $cellValue;
+                $aFlippedStringTable[$cellValue->getHashCode()] = true;
+            }
+        }
+
+        return $aStringTable;
     }
 
     /**
@@ -118,8 +114,6 @@ class StringTable extends WriterPart
      * @param XMLWriter $objWriter XML Writer
      * @param RichText $pRichText Rich text
      * @param string $prefix Optional Namespace prefix
-     *
-     * @throws WriterException
      */
     public function writeRichText(XMLWriter $objWriter, RichText $pRichText, $prefix = null)
     {
@@ -134,7 +128,7 @@ class StringTable extends WriterPart
             $objWriter->startElement($prefix . 'r');
 
             // rPr
-            if ($element instanceof RichText\Run) {
+            if ($element instanceof Run) {
                 // rPr
                 $objWriter->startElement($prefix . 'rPr');
 
@@ -203,8 +197,6 @@ class StringTable extends WriterPart
      * @param XMLWriter $objWriter XML Writer
      * @param RichText|string $pRichText text string or Rich text
      * @param string $prefix Optional Namespace prefix
-     *
-     * @throws WriterException
      */
     public function writeRichTextForCharts(XMLWriter $objWriter, $pRichText = null, $prefix = null)
     {

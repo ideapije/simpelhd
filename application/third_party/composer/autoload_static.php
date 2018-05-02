@@ -16,14 +16,12 @@ class ComposerStaticInitd801aacb779370e769ecc5eb30bf4855
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Component\\Yaml\\' => 23,
             'Symfony\\Component\\Filesystem\\' => 29,
-            'Symfony\\Component\\Debug\\' => 24,
             'Symfony\\Component\\Console\\' => 26,
             'Symfony\\Component\\Config\\' => 25,
         ),
         'P' => 
         array (
             'Psr\\SimpleCache\\' => 16,
-            'Psr\\Log\\' => 8,
             'PhpOffice\\PhpSpreadsheet\\' => 25,
             'Phinx\\' => 6,
         ),
@@ -50,10 +48,6 @@ class ComposerStaticInitd801aacb779370e769ecc5eb30bf4855
         array (
             0 => __DIR__ . '/..' . '/symfony/filesystem',
         ),
-        'Symfony\\Component\\Debug\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/debug',
-        ),
         'Symfony\\Component\\Console\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/console',
@@ -65,10 +59,6 @@ class ComposerStaticInitd801aacb779370e769ecc5eb30bf4855
         'Psr\\SimpleCache\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/simple-cache/src',
-        ),
-        'Psr\\Log\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
         ),
         'PhpOffice\\PhpSpreadsheet\\' => 
         array (

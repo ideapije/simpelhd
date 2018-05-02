@@ -4,7 +4,6 @@ namespace PhpOffice\PhpSpreadsheet\Worksheet;
 
 use PhpOffice\PhpSpreadsheet\Exception as PhpSpreadsheetException;
 use PhpOffice\PhpSpreadsheet\IComparable;
-use PhpOffice\PhpSpreadsheet\Worksheet;
 
 class BaseDrawing implements IComparable
 {
@@ -39,7 +38,7 @@ class BaseDrawing implements IComparable
     /**
      * Worksheet.
      *
-     * @var \PhpOffice\PhpSpreadsheet\Worksheet
+     * @var Worksheet
      */
     protected $worksheet;
 
@@ -183,7 +182,7 @@ class BaseDrawing implements IComparable
     /**
      * Get Worksheet.
      *
-     * @return \PhpOffice\PhpSpreadsheet\Worksheet
+     * @return Worksheet
      */
     public function getWorksheet()
     {
@@ -203,13 +202,13 @@ class BaseDrawing implements IComparable
     public function setWorksheet(Worksheet $pValue = null, $pOverrideOld = false)
     {
         if ($this->worksheet === null) {
-            // Add drawing to \PhpOffice\PhpSpreadsheet\Worksheet
+            // Add drawing to \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet
             $this->worksheet = $pValue;
             $this->worksheet->getCell($this->coordinates);
             $this->worksheet->getDrawingCollection()->append($this);
         } else {
             if ($pOverrideOld) {
-                // Remove drawing from old \PhpOffice\PhpSpreadsheet\Worksheet
+                // Remove drawing from old \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet
                 $iterator = $this->worksheet->getDrawingCollection()->getIterator();
 
                 while ($iterator->valid()) {
@@ -221,10 +220,10 @@ class BaseDrawing implements IComparable
                     }
                 }
 
-                // Set new \PhpOffice\PhpSpreadsheet\Worksheet
+                // Set new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet
                 $this->setWorksheet($pValue);
             } else {
-                throw new PhpSpreadsheetException("A Worksheet has already been assigned. Drawings can only exist on one \PhpOffice\PhpSpreadsheet\Worksheet.");
+                throw new PhpSpreadsheetException('A Worksheet has already been assigned. Drawings can only exist on one \\PhpOffice\\PhpSpreadsheet\\Worksheet.');
             }
         }
 
@@ -366,12 +365,13 @@ class BaseDrawing implements IComparable
     }
 
     /**
-     * Set width and height with proportional resize
+     * Set width and height with proportional resize.
+     *
      * Example:
      * <code>
      * $objDrawing->setResizeProportional(true);
      * $objDrawing->setWidthAndHeight(160,120);
-     * </code>.
+     * </code>
      *
      * @author Vincent@luo MSN:kele_100@hotmail.com
      *
@@ -462,8 +462,6 @@ class BaseDrawing implements IComparable
      * Set Shadow.
      *
      * @param Drawing\Shadow $pValue
-     *
-     * @throws PhpSpreadsheetException
      *
      * @return BaseDrawing
      */

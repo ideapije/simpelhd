@@ -9,7 +9,7 @@ class ExponentialBestFit extends BestFit
      * (Name of this Trend class).
      *
      * @var string
-     **/
+     */
     protected $bestFitType = 'exponential';
 
     /**
@@ -18,7 +18,7 @@ class ExponentialBestFit extends BestFit
      * @param float $xValue X-Value
      *
      * @return float Y-Value
-     **/
+     */
     public function getValueOfYForX($xValue)
     {
         return $this->getIntersect() * pow($this->getSlope(), ($xValue - $this->xOffset));
@@ -30,7 +30,7 @@ class ExponentialBestFit extends BestFit
      * @param float $yValue Y-Value
      *
      * @return float X-Value
-     **/
+     */
     public function getValueOfXForY($yValue)
     {
         return log(($yValue + $this->yOffset) / $this->getIntersect()) / log($this->getSlope());
@@ -42,7 +42,7 @@ class ExponentialBestFit extends BestFit
      * @param int $dp Number of places of decimal precision to display
      *
      * @return string
-     **/
+     */
     public function getEquation($dp = 0)
     {
         $slope = $this->getSlope($dp);
@@ -57,14 +57,14 @@ class ExponentialBestFit extends BestFit
      * @param int $dp Number of places of decimal precision to display
      *
      * @return float
-     **/
+     */
     public function getSlope($dp = 0)
     {
         if ($dp != 0) {
-            return round(exp($this->_slope), $dp);
+            return round(exp($this->slope), $dp);
         }
 
-        return exp($this->_slope);
+        return exp($this->slope);
     }
 
     /**
@@ -73,7 +73,7 @@ class ExponentialBestFit extends BestFit
      * @param int $dp Number of places of decimal precision to display
      *
      * @return float
-     **/
+     */
     public function getIntersect($dp = 0)
     {
         if ($dp != 0) {

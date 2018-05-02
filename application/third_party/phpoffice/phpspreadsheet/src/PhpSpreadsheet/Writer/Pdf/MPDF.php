@@ -4,10 +4,22 @@ namespace PhpOffice\PhpSpreadsheet\Writer\Pdf;
 
 use PhpOffice\PhpSpreadsheet\Exception as PhpSpreadsheetException;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
-use PhpOffice\PhpSpreadsheet\Writer\IWriter;
+use PhpOffice\PhpSpreadsheet\Writer\Pdf;
 
-class MPDF extends Core implements IWriter
+class Mpdf extends Pdf
 {
+    /**
+     * Gets the implementation of external PDF library that should be used.
+     *
+     * @param array $config Configuration array
+     *
+     * @return \Mpdf\Mpdf implementation
+     */
+    protected function createExternalWriterInstance($config)
+    {
+        return new \Mpdf\Mpdf($config);
+    }
+
     /**
      * Save Spreadsheet to file.
      *
@@ -28,12 +40,10 @@ class MPDF extends Core implements IWriter
             $orientation = ($this->spreadsheet->getSheet(0)->getPageSetup()->getOrientation()
                 == PageSetup::ORIENTATION_LANDSCAPE) ? 'L' : 'P';
             $printPaperSize = $this->spreadsheet->getSheet(0)->getPageSetup()->getPaperSize();
-            $printMargins = $this->spreadsheet->getSheet(0)->getPageMargins();
         } else {
             $orientation = ($this->spreadsheet->getSheet($this->getSheetIndex())->getPageSetup()->getOrientation()
                 == PageSetup::ORIENTATION_LANDSCAPE) ? 'L' : 'P';
             $printPaperSize = $this->spreadsheet->getSheet($this->getSheetIndex())->getPageSetup()->getPaperSize();
-            $printMargins = $this->spreadsheet->getSheet($this->getSheetIndex())->getPageMargins();
         }
         $this->setOrientation($orientation);
 
@@ -55,7 +65,8 @@ class MPDF extends Core implements IWriter
         }
 
         //  Create PDF
-        $pdf = new \Mpdf\Mpdf();
+        $config = ['tempDir' => $this->tempDir];
+        $pdf = $this->createExternalWriterInstance($config);
         $ortmp = $orientation;
         $pdf->_setPageSize(strtoupper($paperSize), $ortmp);
         $pdf->DefOrientation = $orientation;

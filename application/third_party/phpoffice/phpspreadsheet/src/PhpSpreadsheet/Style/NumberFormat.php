@@ -4,11 +4,10 @@ namespace PhpOffice\PhpSpreadsheet\Style;
 
 use PhpOffice\PhpSpreadsheet\Calculation\MathTrig;
 use PhpOffice\PhpSpreadsheet\Exception as PhpSpreadsheetException;
-use PhpOffice\PhpSpreadsheet\IComparable;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Shared\StringHelper;
 
-class NumberFormat extends Supervisor implements IComparable
+class NumberFormat extends Supervisor
 {
     // Pre-defined formats
     const FORMAT_GENERAL = 'General';
@@ -26,16 +25,16 @@ class NumberFormat extends Supervisor implements IComparable
     const FORMAT_DATE_YYYYMMDD2 = 'yyyy-mm-dd';
     const FORMAT_DATE_YYYYMMDD = 'yy-mm-dd';
     const FORMAT_DATE_DDMMYYYY = 'dd/mm/yy';
-    const FORMAT_DATE_DMYSLASH = 'd/m/y';
-    const FORMAT_DATE_DMYMINUS = 'd-m-y';
+    const FORMAT_DATE_DMYSLASH = 'd/m/yy';
+    const FORMAT_DATE_DMYMINUS = 'd-m-yy';
     const FORMAT_DATE_DMMINUS = 'd-m';
-    const FORMAT_DATE_MYMINUS = 'm-y';
+    const FORMAT_DATE_MYMINUS = 'm-yy';
     const FORMAT_DATE_XLSX14 = 'mm-dd-yy';
     const FORMAT_DATE_XLSX15 = 'd-mmm-yy';
     const FORMAT_DATE_XLSX16 = 'd-mmm';
     const FORMAT_DATE_XLSX17 = 'mmm-yy';
     const FORMAT_DATE_XLSX22 = 'm/d/yy h:mm';
-    const FORMAT_DATE_DATETIME = 'd/m/y h:mm';
+    const FORMAT_DATE_DATETIME = 'd/m/yy h:mm';
     const FORMAT_DATE_TIME1 = 'h:mm AM/PM';
     const FORMAT_DATE_TIME2 = 'h:mm:ss AM/PM';
     const FORMAT_DATE_TIME3 = 'h:mm';
@@ -48,7 +47,8 @@ class NumberFormat extends Supervisor implements IComparable
 
     const FORMAT_CURRENCY_USD_SIMPLE = '"$"#,##0.00_-';
     const FORMAT_CURRENCY_USD = '$#,##0_-';
-    const FORMAT_CURRENCY_EUR_SIMPLE = '[$EUR ]#,##0.00_-';
+    const FORMAT_CURRENCY_EUR_SIMPLE = '#,##0.00_-"€"';
+    const FORMAT_CURRENCY_EUR = '#,##0_-"€"';
 
     /**
      * Excel built-in number formats.
@@ -124,13 +124,14 @@ class NumberFormat extends Supervisor implements IComparable
 
     /**
      * Apply styles from array.
+     *
      * <code>
      * $spreadsheet->getActiveSheet()->getStyle('B2')->getNumberFormat()->applyFromArray(
-     *        array(
-     *            'formatCode' => NumberFormat::FORMAT_CURRENCY_EUR_SIMPLE
-     *        )
+     *     [
+     *         'formatCode' => NumberFormat::FORMAT_CURRENCY_EUR_SIMPLE
+     *     ]
      * );
-     * </code>.
+     * </code>
      *
      * @param array $pStyles Array containing style information
      *
@@ -416,6 +417,7 @@ class NumberFormat extends Supervisor implements IComparable
             //    fractional seconds - no php equivalent
             '.s' => '',
         ];
+
     /**
      * Search/replace values to convert Excel date/time format masks hours to PHP format masks (24 hr clock).
      *
@@ -425,6 +427,7 @@ class NumberFormat extends Supervisor implements IComparable
             'hh' => 'H',
             'h' => 'G',
         ];
+
     /**
      * Search/replace values to convert Excel date/time format masks hours to PHP format masks (12 hr clock).
      *
@@ -523,15 +526,15 @@ class NumberFormat extends Supervisor implements IComparable
         }
     }
 
-    private static function complexNumberFormatMask($number, $mask, $level = 0)
+    private static function complexNumberFormatMask($number, $mask)
     {
         $sign = ($number < 0.0);
         $number = abs($number);
         if (strpos($mask, '.') !== false) {
             $numbers = explode('.', $number . '.0');
             $masks = explode('.', $mask . '.0');
-            $result1 = self::complexNumberFormatMask($numbers[0], $masks[0], 1);
-            $result2 = strrev(self::complexNumberFormatMask(strrev($numbers[1]), strrev($masks[1]), 1));
+            $result1 = self::complexNumberFormatMask($numbers[0], $masks[0]);
+            $result2 = strrev(self::complexNumberFormatMask(strrev($numbers[1]), strrev($masks[1])));
 
             return (($sign) ? '-' : '') . $result1 . '.' . $result2;
         }
@@ -688,9 +691,9 @@ class NumberFormat extends Supervisor implements IComparable
                     // Strip #
                     $format = preg_replace('/\\#/', '0', $format);
 
-                    $n = "/\[[^\]]+\]/";
+                    $n = '/\\[[^\\]]+\\]/';
                     $m = preg_replace($n, '', $format);
-                    $number_regex = "/(0+)(\.?)(0*)/";
+                    $number_regex = '/(0+)(\\.?)(0*)/';
                     if (preg_match($number_regex, $m, $matches)) {
                         $left = $matches[1];
                         $dec = $matches[2];
@@ -722,7 +725,6 @@ class NumberFormat extends Supervisor implements IComparable
                 }
                 if (preg_match('/\[\$(.*)\]/u', $format, $m)) {
                     //  Currency or Accounting
-                    $currencyFormat = $m[0];
                     $currencyCode = $m[1];
                     list($currencyCode) = explode('-', $currencyCode);
                     if ($currencyCode == '') {
@@ -732,9 +734,6 @@ class NumberFormat extends Supervisor implements IComparable
                 }
             }
         }
-
-        // Escape any escaped slashes to a single slash
-        $format = preg_replace('/\\\\/u', '\\', $format);
 
         // Additional formatting provided by callback function
         if ($callBack !== null) {

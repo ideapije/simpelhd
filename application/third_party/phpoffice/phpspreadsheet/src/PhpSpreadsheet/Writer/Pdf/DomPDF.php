@@ -3,10 +3,20 @@
 namespace PhpOffice\PhpSpreadsheet\Writer\Pdf;
 
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
-use PhpOffice\PhpSpreadsheet\Writer\IWriter;
+use PhpOffice\PhpSpreadsheet\Writer\Pdf;
 
-class DomPDF extends Core implements IWriter
+class Dompdf extends Pdf
 {
+    /**
+     * Gets the implementation of external PDF library that should be used.
+     *
+     * @return \Dompdf\Dompdf implementation
+     */
+    protected function createExternalWriterInstance()
+    {
+        return new \Dompdf\Dompdf();
+    }
+
     /**
      * Save Spreadsheet to file.
      *
@@ -26,12 +36,10 @@ class DomPDF extends Core implements IWriter
             $orientation = ($this->spreadsheet->getSheet(0)->getPageSetup()->getOrientation()
                 == PageSetup::ORIENTATION_LANDSCAPE) ? 'L' : 'P';
             $printPaperSize = $this->spreadsheet->getSheet(0)->getPageSetup()->getPaperSize();
-            $printMargins = $this->spreadsheet->getSheet(0)->getPageMargins();
         } else {
             $orientation = ($this->spreadsheet->getSheet($this->getSheetIndex())->getPageSetup()->getOrientation()
                 == PageSetup::ORIENTATION_LANDSCAPE) ? 'L' : 'P';
             $printPaperSize = $this->spreadsheet->getSheet($this->getSheetIndex())->getPageSetup()->getPaperSize();
-            $printMargins = $this->spreadsheet->getSheet($this->getSheetIndex())->getPageMargins();
         }
 
         $orientation = ($orientation == 'L') ? 'landscape' : 'portrait';
@@ -52,10 +60,10 @@ class DomPDF extends Core implements IWriter
         }
 
         //  Create PDF
-        $pdf = new \Dompdf\Dompdf();
-        $pdf->set_paper(strtolower($paperSize), $orientation);
+        $pdf = $this->createExternalWriterInstance();
+        $pdf->setPaper(strtolower($paperSize), $orientation);
 
-        $pdf->load_html(
+        $pdf->loadHtml(
             $this->generateHTMLHeader(false) .
             $this->generateSheetData() .
             $this->generateHTMLFooter()

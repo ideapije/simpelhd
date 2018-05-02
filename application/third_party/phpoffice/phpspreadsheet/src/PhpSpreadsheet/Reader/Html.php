@@ -6,15 +6,15 @@ use DOMDocument;
 use DOMElement;
 use DOMNode;
 use DOMText;
-use PhpOffice\PhpSpreadsheet\Cell;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 /** PhpSpreadsheet root directory */
-class Html extends BaseReader implements IReader
+class Html extends BaseReader
 {
     /**
      * Sample size to read to determine if it's HTML or not.
@@ -112,8 +112,6 @@ class Html extends BaseReader implements IReader
      *
      * @param string $pFilename
      *
-     * @throws Exception
-     *
      * @return bool
      */
     public function canRead($pFilename)
@@ -148,7 +146,14 @@ class Html extends BaseReader implements IReader
         $filename = $meta['uri'];
 
         $size = filesize($filename);
+        if ($size === 0) {
+            return '';
+        }
+
         $blockSize = self::TEST_SAMPLE_SIZE;
+        if ($size < $blockSize) {
+            $blockSize = $size;
+        }
 
         fseek($this->fileHandle, $size - $blockSize);
 
@@ -192,6 +197,8 @@ class Html extends BaseReader implements IReader
      * Set input encoding.
      *
      * @param string $pValue Input encoding, eg: 'ANSI'
+     *
+     * @return Html
      */
     public function setInputEncoding($pValue)
     {
@@ -212,7 +219,9 @@ class Html extends BaseReader implements IReader
 
     //    Data Array used for testing only, should write to Spreadsheet object on completion of tests
     protected $dataArray = [];
+
     protected $tableLevel = 0;
+
     protected $nestedColumn = ['A'];
 
     protected function setTableStartColumn($column)
@@ -238,7 +247,7 @@ class Html extends BaseReader implements IReader
         return array_pop($this->nestedColumn);
     }
 
-    protected function flushCell($sheet, $column, $row, &$cellContent)
+    protected function flushCell(Worksheet $sheet, $column, $row, &$cellContent)
     {
         if (is_string($cellContent)) {
             //    Simple String content
@@ -307,6 +316,14 @@ class Html extends BaseReader implements IReader
                     case 'em':
                     case 'strong':
                     case 'b':
+                        if (isset($attributeArray['class']) && $attributeArray['class'] === 'comment') {
+                            $sheet->getComment($column . $row)
+                                ->getText()
+                                ->createTextRun($child->textContent);
+
+                            break;
+                        }
+
                         if ($cellContent > '') {
                             $cellContent .= ' ';
                         }
@@ -349,6 +366,10 @@ class Html extends BaseReader implements IReader
                                     }
 
                                     break;
+                                case 'class':
+                                    if ($attributeValue === 'comment-indicator') {
+                                        break; // Ignore - it's just a red square.
+                                    }
                             }
                         }
                         $cellContent .= ' ';
@@ -448,7 +469,7 @@ class Html extends BaseReader implements IReader
                                 ++$columnTo;
                             }
                             $range = $column . $row . ':' . $columnTo . ($row + $attributeArray['rowspan'] - 1);
-                            foreach (Cell::extractAllCellReferencesInRange($range) as $value) {
+                            foreach (Coordinate::extractAllCellReferencesInRange($range) as $value) {
                                 $this->rowspan[$value] = true;
                             }
                             $sheet->mergeCells($range);
@@ -456,7 +477,7 @@ class Html extends BaseReader implements IReader
                         } elseif (isset($attributeArray['rowspan'])) {
                             //create merging rowspan
                             $range = $column . $row . ':' . $column . ($row + $attributeArray['rowspan'] - 1);
-                            foreach (Cell::extractAllCellReferencesInRange($range) as $value) {
+                            foreach (Coordinate::extractAllCellReferencesInRange($range) as $value) {
                                 $this->rowspan[$value] = true;
                             }
                             $sheet->mergeCells($range);
@@ -484,7 +505,7 @@ class Html extends BaseReader implements IReader
                     case 'body':
                         $row = 1;
                         $column = 'A';
-                        $content = '';
+                        $cellContent = '';
                         $this->tableLevel = 0;
                         $this->processDomElement($child, $sheet, $row, $column, $cellContent);
 
@@ -568,7 +589,7 @@ class Html extends BaseReader implements IReader
      *
      * @param string $xml
      *
-     * @throws Exception
+     * @return string
      */
     public function securityScan($xml)
     {
@@ -591,9 +612,9 @@ class Html extends BaseReader implements IReader
      * - Implement to other propertie, such as border
      *
      * @param Worksheet $sheet
-     * @param array $attributeArray
      * @param int $row
      * @param string $column
+     * @param array $attributeArray
      */
     private function applyInlineStyle(&$sheet, $row, $column, $attributeArray)
     {

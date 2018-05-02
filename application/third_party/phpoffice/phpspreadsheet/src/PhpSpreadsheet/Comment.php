@@ -2,6 +2,8 @@
 
 namespace PhpOffice\PhpSpreadsheet;
 
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+
 class Comment implements IComparable
 {
     /**
@@ -69,8 +71,6 @@ class Comment implements IComparable
 
     /**
      * Create a new Comment.
-     *
-     * @throws Exception
      */
     public function __construct()
     {

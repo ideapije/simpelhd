@@ -3,9 +3,8 @@
 namespace PhpOffice\PhpSpreadsheet\Style;
 
 use PhpOffice\PhpSpreadsheet\Exception as PhpSpreadsheetException;
-use PhpOffice\PhpSpreadsheet\IComparable;
 
-class Alignment extends Supervisor implements IComparable
+class Alignment extends Supervisor
 {
     // Horizontal alignment styles
     const HORIZONTAL_GENERAL = 'general';
@@ -125,16 +124,17 @@ class Alignment extends Supervisor implements IComparable
 
     /**
      * Apply styles from array.
+     *
      * <code>
      * $spreadsheet->getActiveSheet()->getStyle('B2')->getAlignment()->applyFromArray(
-     *        array(
-     *            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-     *            'vertical'   => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-     *            'textRotation'   => 0,
-     *            'wrapText'            => TRUE
-     *        )
+     *        [
+     *            'horizontal'   => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+     *            'vertical'     => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+     *            'textRotation' => 0,
+     *            'wrapText'     => TRUE
+     *        ]
      * );
-     * </code>.
+     * </code>
      *
      * @param array $pStyles Array containing style information
      *

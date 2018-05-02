@@ -2,14 +2,12 @@
 
 namespace PhpOffice\PhpSpreadsheet\Worksheet;
 
-use PhpOffice\PhpSpreadsheet\Worksheet;
-
 class Row
 {
     /**
-     * \PhpOffice\PhpSpreadsheet\Worksheet.
+     * \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet.
      *
-     * @var \PhpOffice\PhpSpreadsheet\Worksheet
+     * @var Worksheet
      */
     private $worksheet;
 
@@ -23,7 +21,7 @@ class Row
     /**
      * Create a new row.
      *
-     * @param Worksheet $parent
+     * @param Worksheet $worksheet
      * @param int $rowIndex
      */
     public function __construct(Worksheet $worksheet = null, $rowIndex = 1)

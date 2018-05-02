@@ -2,15 +2,15 @@
 
 namespace PhpOffice\PhpSpreadsheet\Writer;
 
-use PhpOffice\PhpSpreadsheet\Calculation;
+use PhpOffice\PhpSpreadsheet\Calculation\Calculation;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
-class Csv extends BaseWriter implements IWriter
+class Csv extends BaseWriter
 {
     /**
      * PhpSpreadsheet object.
      *
-     * @var PhpSpreadsheet
+     * @var Spreadsheet
      */
     private $spreadsheet;
 
@@ -309,8 +309,6 @@ class Csv extends BaseWriter implements IWriter
      *
      * @param resource $pFileHandle PHP filehandle
      * @param array $pValues Array containing values in a row
-     *
-     * @throws Exception
      */
     private function writeLine($pFileHandle, array $pValues)
     {

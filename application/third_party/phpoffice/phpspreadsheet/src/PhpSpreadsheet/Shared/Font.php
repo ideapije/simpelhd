@@ -3,7 +3,7 @@
 namespace PhpOffice\PhpSpreadsheet\Shared;
 
 use PhpOffice\PhpSpreadsheet\Exception as PhpSpreadsheetException;
-use PhpOffice\PhpSpreadsheet\RichText;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
 
 class Font
 {
@@ -509,6 +509,7 @@ class Font
                 break;
             default:
                 throw new PhpSpreadsheetException('Unknown font name "' . $name . '". Cannot map to TrueType font file');
+
                 break;
         }
 

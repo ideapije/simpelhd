@@ -2,8 +2,6 @@
 
 namespace PhpOffice\PhpSpreadsheet\Cell;
 
-use PhpOffice\PhpSpreadsheet\Cell;
-
 interface IValueBinder
 {
     /**
@@ -14,5 +12,5 @@ interface IValueBinder
      *
      * @return bool
      */
-    public function bindValue(Cell $cell, $value = null);
+    public function bindValue(Cell $cell, $value);
 }

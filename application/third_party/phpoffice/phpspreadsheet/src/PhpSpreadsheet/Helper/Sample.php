@@ -5,6 +5,7 @@ namespace PhpOffice\PhpSpreadsheet\Helper;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\IWriter;
+use PhpOffice\PhpSpreadsheet\Writer\Pdf;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RecursiveRegexIterator;
@@ -118,6 +119,11 @@ class Sample
         foreach ($writers as $writerType) {
             $path = $this->getFilename($filename, mb_strtolower($writerType));
             $writer = IOFactory::createWriter($spreadsheet, $writerType);
+            if ($writer instanceof Pdf) {
+                // PDF writer needs temporary directory
+                $tempDir = $this->getTemporaryFolder();
+                $writer->setTempDir($tempDir);
+            }
             $callStartTime = microtime(true);
             $writer->save($path);
             $this->logWrite($writer, $path, $callStartTime);
@@ -135,7 +141,9 @@ class Sample
     {
         $tempFolder = sys_get_temp_dir() . '/phpspreadsheet';
         if (!is_dir($tempFolder)) {
-            mkdir($tempFolder);
+            if (!mkdir($tempFolder) && !is_dir($tempFolder)) {
+                throw new \RuntimeException(sprintf('Directory "%s" was not created', $tempFolder));
+            }
         }
 
         return $tempFolder;
@@ -151,7 +159,9 @@ class Sample
      */
     public function getFilename($filename, $extension = 'xlsx')
     {
-        return $this->getTemporaryFolder() . '/' . str_replace('.php', '.' . $extension, basename($filename));
+        $originalExtension = pathinfo($filename, PATHINFO_EXTENSION);
+
+        return $this->getTemporaryFolder() . '/' . str_replace('.' . $originalExtension, '.' . $extension, basename($filename));
     }
 
     /**
@@ -190,8 +200,6 @@ class Sample
      * @param IWriter $writer
      * @param string $path
      * @param float $callStartTime
-     *
-     * @throws \ReflectionException
      */
     public function logWrite(IWriter $writer, $path, $callStartTime)
     {

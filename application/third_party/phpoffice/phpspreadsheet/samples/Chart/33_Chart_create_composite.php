@@ -1,6 +1,6 @@
 <?php
 
-use PhpOffice\PhpSpreadsheet\Chart;
+use PhpOffice\PhpSpreadsheet\Chart\Chart;
 use PhpOffice\PhpSpreadsheet\Chart\DataSeries;
 use PhpOffice\PhpSpreadsheet\Chart\DataSeriesValues;
 use PhpOffice\PhpSpreadsheet\Chart\Legend;
@@ -100,7 +100,7 @@ $series2 = new DataSeries(
     DataSeries::GROUPING_STANDARD, // plotGrouping
     range(0, count($dataSeriesValues2) - 1), // plotOrder
     $dataSeriesLabels2, // plotLabel
-    null, // plotCategory
+    [], // plotCategory
     $dataSeriesValues2        // plotValues
 );
 
@@ -121,7 +121,7 @@ $series3 = new DataSeries(
     DataSeries::GROUPING_STANDARD, // plotGrouping
     range(0, count($dataSeriesValues2) - 1), // plotOrder
     $dataSeriesLabels3, // plotLabel
-    null, // plotCategory
+    [], // plotCategory
     $dataSeriesValues3        // plotValues
 );
 

@@ -2,10 +2,12 @@
 
 namespace PhpOffice\PhpSpreadsheet\Writer\Xls;
 
-use PhpOffice\PhpSpreadsheet\Cell;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
 use PhpOffice\PhpSpreadsheet\Exception as PhpSpreadsheetException;
-use PhpOffice\PhpSpreadsheet\RichText;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+use PhpOffice\PhpSpreadsheet\RichText\Run;
 use PhpOffice\PhpSpreadsheet\Shared\StringHelper;
 use PhpOffice\PhpSpreadsheet\Shared\Xls;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -174,7 +176,7 @@ class Worksheet extends BIFFwriter
     /**
      * Sheet object.
      *
-     * @var \PhpOffice\PhpSpreadsheet\Worksheet
+     * @var \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet
      */
     public $phpSheet;
 
@@ -212,16 +214,15 @@ class Worksheet extends BIFFwriter
     /**
      * Constructor.
      *
-     * @param int &$str_total Total number of strings
-     * @param int &$str_unique Total number of unique strings
+     * @param int $str_total Total number of strings
+     * @param int $str_unique Total number of unique strings
      * @param array &$str_table String Table
      * @param array &$colors Colour Table
-     * @param mixed $parser The formula parser created for the Workbook
+     * @param Parser $parser The formula parser created for the Workbook
      * @param bool $preCalculateFormulas Flag indicating whether formulas should be calculated or just written
-     * @param string $phpSheet The worksheet to write
-     * @param \PhpOffice\PhpSpreadsheet\Worksheet $phpSheet
+     * @param \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $phpSheet The worksheet to write
      */
-    public function __construct(&$str_total, &$str_unique, &$str_table, &$colors, $parser, $preCalculateFormulas, $phpSheet)
+    public function __construct(&$str_total, &$str_unique, &$str_table, &$colors, Parser $parser, $preCalculateFormulas, \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $phpSheet)
     {
         // It needs to call its parent's constructor explicitly
         parent::__construct();
@@ -259,8 +260,8 @@ class Worksheet extends BIFFwriter
         // Determine lowest and highest column and row
         $this->lastRowIndex = ($maxR > 65535) ? 65535 : $maxR;
 
-        $this->firstColumnIndex = Cell::columnIndexFromString($minC);
-        $this->lastColumnIndex = Cell::columnIndexFromString($maxC);
+        $this->firstColumnIndex = Coordinate::columnIndexFromString($minC);
+        $this->lastColumnIndex = Coordinate::columnIndexFromString($maxC);
 
 //        if ($this->firstColumnIndex > 255) $this->firstColumnIndex = 255;
         if ($this->lastColumnIndex > 255) {
@@ -309,7 +310,7 @@ class Worksheet extends BIFFwriter
 
             $width = $defaultWidth;
 
-            $columnLetter = Cell::stringFromColumnIndex($i);
+            $columnLetter = Coordinate::stringFromColumnIndex($i + 1);
             if (isset($columnDimensions[$columnLetter])) {
                 $columnDimension = $columnDimensions[$columnLetter];
                 if ($columnDimension->getWidth() >= 0) {
@@ -394,7 +395,7 @@ class Worksheet extends BIFFwriter
         foreach ($phpSheet->getCoordinates() as $coordinate) {
             $cell = $phpSheet->getCell($coordinate);
             $row = $cell->getRow() - 1;
-            $column = Cell::columnIndexFromString($cell->getColumn()) - 1;
+            $column = Coordinate::columnIndexFromString($cell->getColumn()) - 1;
 
             // Don't break Excel break the code!
             if ($row > 65535 || $column > 255) {
@@ -412,7 +413,7 @@ class Worksheet extends BIFFwriter
                 $elements = $cVal->getRichTextElements();
                 foreach ($elements as $element) {
                     // FONT Index
-                    if ($element instanceof RichText\Run) {
+                    if ($element instanceof Run) {
                         $str_fontidx = $this->fontHashIndex[$element->getFont()->getHashCode()];
                     } else {
                         $str_fontidx = 0;
@@ -424,8 +425,8 @@ class Worksheet extends BIFFwriter
                 $this->writeRichTextString($row, $column, $cVal->getPlainText(), $xfIndex, $arrcRun);
             } else {
                 switch ($cell->getDatatype()) {
-                    case Cell\DataType::TYPE_STRING:
-                    case Cell\DataType::TYPE_NULL:
+                    case DataType::TYPE_STRING:
+                    case DataType::TYPE_NULL:
                         if ($cVal === '' || $cVal === null) {
                             $this->writeBlank($row, $column, $xfIndex);
                         } else {
@@ -433,21 +434,21 @@ class Worksheet extends BIFFwriter
                         }
 
                         break;
-                    case Cell\DataType::TYPE_NUMERIC:
+                    case DataType::TYPE_NUMERIC:
                         $this->writeNumber($row, $column, $cVal, $xfIndex);
 
                         break;
-                    case Cell\DataType::TYPE_FORMULA:
+                    case DataType::TYPE_FORMULA:
                         $calculatedValue = $this->preCalculateFormulas ?
                             $cell->getCalculatedValue() : null;
                         $this->writeFormula($row, $column, $cVal, $xfIndex, $calculatedValue);
 
                         break;
-                    case Cell\DataType::TYPE_BOOL:
+                    case DataType::TYPE_BOOL:
                         $this->writeBoolErr($row, $column, $cVal, 0, $xfIndex);
 
                         break;
-                    case Cell\DataType::TYPE_ERROR:
+                    case DataType::TYPE_ERROR:
                         $this->writeBoolErr($row, $column, self::mapErrorCode($cVal), 1, $xfIndex);
 
                         break;
@@ -478,7 +479,7 @@ class Worksheet extends BIFFwriter
 
         // Hyperlinks
         foreach ($phpSheet->getHyperLinkCollection() as $coordinate => $hyperlink) {
-            list($column, $row) = Cell::coordinateFromString($coordinate);
+            list($column, $row) = Coordinate::coordinateFromString($coordinate);
 
             $url = $hyperlink->getUrl();
 
@@ -492,7 +493,7 @@ class Worksheet extends BIFFwriter
                 $url = 'external:' . $url;
             }
 
-            $this->writeUrl($row - 1, Cell::columnIndexFromString($column) - 1, $url);
+            $this->writeUrl($row - 1, Coordinate::columnIndexFromString($column) - 1, $url);
         }
 
         $this->writeDataValidity();
@@ -551,10 +552,10 @@ class Worksheet extends BIFFwriter
             $lastCell = $explodes[1];
         }
 
-        $firstCellCoordinates = Cell::coordinateFromString($firstCell); // e.g. array(0, 1)
-        $lastCellCoordinates = Cell::coordinateFromString($lastCell); // e.g. array(1, 6)
+        $firstCellCoordinates = Coordinate::coordinateFromString($firstCell); // e.g. [0, 1]
+        $lastCellCoordinates = Coordinate::coordinateFromString($lastCell); // e.g. [1, 6]
 
-        return pack('vvvv', $firstCellCoordinates[1] - 1, $lastCellCoordinates[1] - 1, Cell::columnIndexFromString($firstCellCoordinates[0]) - 1, Cell::columnIndexFromString($lastCellCoordinates[0]) - 1);
+        return pack('vvvv', $firstCellCoordinates[1] - 1, $lastCellCoordinates[1] - 1, Coordinate::columnIndexFromString($firstCellCoordinates[0]) - 1, Coordinate::columnIndexFromString($lastCellCoordinates[0]) - 1);
     }
 
     /**
@@ -684,55 +685,13 @@ class Worksheet extends BIFFwriter
 
     /**
      * Write a string to the specified row and column (zero indexed).
-     * NOTE: there is an Excel 5 defined limit of 255 characters.
-     * $format is optional.
-     * Returns  0 : normal termination
-     *         -2 : row or column out of range
-     *         -3 : long string truncated to 255 chars.
-     *
-     * @param int $row Zero indexed row
-     * @param int $col Zero indexed column
-     * @param string $str The string to write
-     * @param mixed $xfIndex The XF format index for the cell
-     *
-     * @return int
-     */
-    private function writeLabel($row, $col, $str, $xfIndex)
-    {
-        $strlen = strlen($str);
-        $record = 0x0204; // Record identifier
-        $length = 0x0008 + $strlen; // Bytes to follow
-
-        $str_error = 0;
-
-        if ($strlen > $this->xlsStringMaxLength) { // LABEL must be < 255 chars
-            $str = substr($str, 0, $this->xlsStringMaxLength);
-            $length = 0x0008 + $this->xlsStringMaxLength;
-            $strlen = $this->xlsStringMaxLength;
-            $str_error = -3;
-        }
-
-        $header = pack('vv', $record, $length);
-        $data = pack('vvvv', $row, $col, $xfIndex, $strlen);
-        $this->append($header . $data . $str);
-
-        return $str_error;
-    }
-
-    /**
-     * Write a string to the specified row and column (zero indexed).
      * This is the BIFF8 version (no 255 chars limit).
      * $format is optional.
-     * Returns  0 : normal termination
-     *         -2 : row or column out of range
-     *         -3 : long string truncated to 255 chars.
      *
      * @param int $row Zero indexed row
      * @param int $col Zero indexed column
      * @param string $str The string to write
      * @param mixed $xfIndex The XF format index for the cell
-     *
-     * @return int
      */
     private function writeLabelSst($row, $col, $str, $xfIndex)
     {
@@ -753,37 +712,6 @@ class Worksheet extends BIFFwriter
     }
 
     /**
-     * Writes a note associated with the cell given by the row and column.
-     * NOTE records don't have a length limit.
-     *
-     * @param int $row Zero indexed row
-     * @param int $col Zero indexed column
-     * @param string $note The note to write
-     */
-    private function writeNote($row, $col, $note)
-    {
-        $note_length = strlen($note);
-        $record = 0x001C; // Record identifier
-        $max_length = 2048; // Maximun length for a NOTE record
-
-        // Length for this record is no more than 2048 + 6
-        $length = 0x0006 + min($note_length, 2048);
-        $header = pack('vv', $record, $length);
-        $data = pack('vvv', $row, $col, $note_length);
-        $this->append($header . $data . substr($note, 0, 2048));
-
-        for ($i = $max_length; $i < $note_length; $i += $max_length) {
-            $chunk = substr($note, $i, $max_length);
-            $length = 0x0006 + strlen($chunk);
-            $header = pack('vv', $record, $length);
-            $data = pack('vvv', -1, 0, strlen($chunk));
-            $this->append($header . $data . $chunk);
-        }
-
-        return 0;
-    }
-
-    /**
      * Write a blank cell to the specified row and column (zero indexed).
      * A blank cell is used to specify formatting without adding a string
      * or a number.
@@ -798,6 +726,8 @@ class Worksheet extends BIFFwriter
      * @param int $row Zero indexed row
      * @param int $col Zero indexed column
      * @param mixed $xfIndex The XF format index
+     *
+     * @return int
      */
     public function writeBlank($row, $col, $xfIndex)
     {
@@ -819,6 +749,8 @@ class Worksheet extends BIFFwriter
      * @param int $value
      * @param bool $isError Error or Boolean?
      * @param int $xfIndex
+     *
+     * @return int
      */
     private function writeBoolErr($row, $col, $value, $isError, $xfIndex)
     {
@@ -867,7 +799,7 @@ class Worksheet extends BIFFwriter
                 // Numeric value
                 $num = pack('d', $calculatedValue);
             } elseif (is_string($calculatedValue)) {
-                $errorCodes = Cell\DataType::getErrorCodes();
+                $errorCodes = DataType::getErrorCodes();
                 if (isset($errorCodes[$calculatedValue])) {
                     // Error value
                     $num = pack('CCCvCv', 0x02, 0x00, self::mapErrorCode($calculatedValue), 0x00, 0x00, 0xFFFF);
@@ -1142,7 +1074,7 @@ class Worksheet extends BIFFwriter
         // parameters accordingly.
         // Split the dir name and sheet name (if it exists)
         $dir_long = $url;
-        if (preg_match("/\#/", $url)) {
+        if (preg_match('/\\#/', $url)) {
             $link_type |= 0x08;
         }
 
@@ -1150,11 +1082,11 @@ class Worksheet extends BIFFwriter
         $link_type = pack('V', $link_type);
 
         // Calculate the up-level dir count e.g.. (..\..\..\ == 3)
-        $up_count = preg_match_all("/\.\.\\\/", $dir_long, $useless);
+        $up_count = preg_match_all("/\\.\\.\\\/", $dir_long, $useless);
         $up_count = pack('v', $up_count);
 
         // Store the short dos dir name (null terminated)
-        $dir_short = preg_replace("/\.\.\\\/", '', $dir_long) . "\0";
+        $dir_short = preg_replace("/\\.\\.\\\/", '', $dir_long) . "\0";
 
         // Store the long dir name as a wchar string (non-null terminated)
         $dir_long = $dir_long . "\0";
@@ -1420,7 +1352,7 @@ class Worksheet extends BIFFwriter
     private function writeSelection()
     {
         // look up the selected cell range
-        $selectedCells = Cell::splitRange($this->phpSheet->getSelectedCells());
+        $selectedCells = Coordinate::splitRange($this->phpSheet->getSelectedCells());
         $selectedCells = $selectedCells[0];
         if (count($selectedCells) == 2) {
             list($first, $last) = $selectedCells;
@@ -1429,12 +1361,12 @@ class Worksheet extends BIFFwriter
             $last = $selectedCells[0];
         }
 
-        list($colFirst, $rwFirst) = Cell::coordinateFromString($first);
-        $colFirst = Cell::columnIndexFromString($colFirst) - 1; // base 0 column index
+        list($colFirst, $rwFirst) = Coordinate::coordinateFromString($first);
+        $colFirst = Coordinate::columnIndexFromString($colFirst) - 1; // base 0 column index
         --$rwFirst; // base 0 row index
 
-        list($colLast, $rwLast) = Cell::coordinateFromString($last);
-        $colLast = Cell::columnIndexFromString($colLast) - 1; // base 0 column index
+        list($colLast, $rwLast) = Coordinate::coordinateFromString($last);
+        $colLast = Coordinate::columnIndexFromString($colLast) - 1; // base 0 column index
         --$rwLast; // base 0 row index
 
         // make sure we are not out of bounds
@@ -1507,12 +1439,12 @@ class Worksheet extends BIFFwriter
             ++$j;
 
             // extract the row and column indexes
-            $range = Cell::splitRange($mergeCell);
+            $range = Coordinate::splitRange($mergeCell);
             list($first, $last) = $range[0];
-            list($firstColumn, $firstRow) = Cell::coordinateFromString($first);
-            list($lastColumn, $lastRow) = Cell::coordinateFromString($last);
+            list($firstColumn, $firstRow) = Coordinate::coordinateFromString($first);
+            list($lastColumn, $lastRow) = Coordinate::coordinateFromString($last);
 
-            $recordData .= pack('vvvv', $firstRow - 1, $lastRow - 1, Cell::columnIndexFromString($firstColumn) - 1, Cell::columnIndexFromString($lastColumn) - 1);
+            $recordData .= pack('vvvv', $firstRow - 1, $lastRow - 1, Coordinate::columnIndexFromString($firstColumn) - 1, Coordinate::columnIndexFromString($lastColumn) - 1);
 
             // flush record if we have reached limit for number of merged cells, or reached final merged cell
             if ($j == $maxCountMergeCellsPerRecord or $i == $countMergeCells) {
@@ -1648,59 +1580,6 @@ class Worksheet extends BIFFwriter
     }
 
     /**
-     * Write BIFF record EXTERNCOUNT to indicate the number of external sheet
-     * references in a worksheet.
-     *
-     * Excel only stores references to external sheets that are used in formulas.
-     * For simplicity we store references to all the sheets in the workbook
-     * regardless of whether they are used or not. This reduces the overall
-     * complexity and eliminates the need for a two way dialogue between the formula
-     * parser the worksheet objects.
-     *
-     * @param int $count The number of external sheet references in this worksheet
-     */
-    private function writeExterncount($count)
-    {
-        $record = 0x0016; // Record identifier
-        $length = 0x0002; // Number of bytes to follow
-
-        $header = pack('vv', $record, $length);
-        $data = pack('v', $count);
-        $this->append($header . $data);
-    }
-
-    /**
-     * Writes the Excel BIFF EXTERNSHEET record. These references are used by
-     * formulas. A formula references a sheet name via an index. Since we store a
-     * reference to all of the external worksheets the EXTERNSHEET index is the same
-     * as the worksheet index.
-     *
-     * @param string $sheetname The name of a external worksheet
-     */
-    private function writeExternsheet($sheetname)
-    {
-        $record = 0x0017; // Record identifier
-
-        // References to the current sheet are encoded differently to references to
-        // external sheets.
-        //
-        if ($this->phpSheet->getTitle() == $sheetname) {
-            $sheetname = '';
-            $length = 0x02; // The following 2 bytes
-            $cch = 1; // The following byte
-            $rgch = 0x02; // Self reference
-        } else {
-            $length = 0x02 + strlen($sheetname);
-            $cch = strlen($sheetname);
-            $rgch = 0x03; // Reference to a sheet in the current workbook
-        }
-
-        $header = pack('vv', $record, $length);
-        $data = pack('CC', $cch, $rgch);
-        $this->append($header . $data . $sheetname);
-    }
-
-    /**
      * Writes the Excel BIFF PANE record.
      * The panes can either be frozen or thawed (unfrozen).
      * Frozen panes are specified in terms of an integer number of rows and columns.
@@ -1709,17 +1588,22 @@ class Worksheet extends BIFFwriter
     private function writePanes()
     {
         $panes = [];
-        if ($freezePane = $this->phpSheet->getFreezePane()) {
-            list($column, $row) = Cell::coordinateFromString($freezePane);
-            $panes[0] = $row - 1;
-            $panes[1] = Cell::columnIndexFromString($column) - 1;
+        if ($this->phpSheet->getFreezePane()) {
+            list($column, $row) = Coordinate::coordinateFromString($this->phpSheet->getFreezePane());
+            $panes[0] = Coordinate::columnIndexFromString($column) - 1;
+            $panes[1] = $row - 1;
+
+            list($leftMostColumn, $topRow) = Coordinate::coordinateFromString($this->phpSheet->getTopLeftCell());
+            //Coordinates are zero-based in xls files
+            $panes[2] = $topRow - 1;
+            $panes[3] = Coordinate::columnIndexFromString($leftMostColumn) - 1;
         } else {
             // thaw panes
             return;
         }
 
-        $y = isset($panes[0]) ? $panes[0] : null;
-        $x = isset($panes[1]) ? $panes[1] : null;
+        $x = isset($panes[0]) ? $panes[0] : null;
+        $y = isset($panes[1]) ? $panes[1] : null;
         $rwTop = isset($panes[2]) ? $panes[2] : null;
         $colLeft = isset($panes[3]) ? $panes[3] : null;
         if (count($panes) > 4) { // if Active pane was received
@@ -2053,7 +1937,7 @@ class Worksheet extends BIFFwriter
         $record = 0x009D; // Record identifier
         $length = 0x0002; // Bytes to follow
 
-        $rangeBounds = Cell::rangeBoundaries($this->phpSheet->getAutoFilter()->getRange());
+        $rangeBounds = Coordinate::rangeBoundaries($this->phpSheet->getAutoFilter()->getRange());
         $iNumFilters = 1 + $rangeBounds[1][0] - $rangeBounds[0][0];
 
         $header = pack('vv', $record, $length);
@@ -2155,21 +2039,21 @@ class Worksheet extends BIFFwriter
 
         foreach ($this->phpSheet->getBreaks() as $cell => $breakType) {
             // Fetch coordinates
-            $coordinates = Cell::coordinateFromString($cell);
+            $coordinates = Coordinate::coordinateFromString($cell);
 
             // Decide what to do by the type of break
             switch ($breakType) {
-                case \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_COLUMN:
+                case \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_COLUMN:
                     // Add to list of vertical breaks
-                    $vbreaks[] = Cell::columnIndexFromString($coordinates[0]) - 1;
+                    $vbreaks[] = Coordinate::columnIndexFromString($coordinates[0]) - 1;
 
                     break;
-                case \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_ROW:
+                case \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_ROW:
                     // Add to list of horizontal breaks
                     $hbreaks[] = $coordinates[1];
 
                     break;
-                case \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_NONE:
+                case \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_NONE:
                 default:
                     // Nothing to do
                     break;
@@ -2408,7 +2292,7 @@ class Worksheet extends BIFFwriter
         $row_end = $row_start; // Row containing bottom right corner of object
 
         // Zero the specified offset if greater than the cell dimensions
-        if ($x1 >= Xls::sizeCol($this->phpSheet, Cell::stringFromColumnIndex($col_start))) {
+        if ($x1 >= Xls::sizeCol($this->phpSheet, Coordinate::stringFromColumnIndex($col_start + 1))) {
             $x1 = 0;
         }
         if ($y1 >= Xls::sizeRow($this->phpSheet, $row_start + 1)) {
@@ -2419,8 +2303,8 @@ class Worksheet extends BIFFwriter
         $height = $height + $y1 - 1;
 
         // Subtract the underlying cell widths to find the end cell of the image
-        while ($width >= Xls::sizeCol($this->phpSheet, Cell::stringFromColumnIndex($col_end))) {
-            $width -= Xls::sizeCol($this->phpSheet, Cell::stringFromColumnIndex($col_end));
+        while ($width >= Xls::sizeCol($this->phpSheet, Coordinate::stringFromColumnIndex($col_end + 1))) {
+            $width -= Xls::sizeCol($this->phpSheet, Coordinate::stringFromColumnIndex($col_end + 1));
             ++$col_end;
         }
 
@@ -2433,10 +2317,10 @@ class Worksheet extends BIFFwriter
         // Bitmap isn't allowed to start or finish in a hidden cell, i.e. a cell
         // with zero eight or width.
         //
-        if (Xls::sizeCol($this->phpSheet, Cell::stringFromColumnIndex($col_start)) == 0) {
+        if (Xls::sizeCol($this->phpSheet, Coordinate::stringFromColumnIndex($col_start + 1)) == 0) {
             return;
         }
-        if (Xls::sizeCol($this->phpSheet, Cell::stringFromColumnIndex($col_end)) == 0) {
+        if (Xls::sizeCol($this->phpSheet, Coordinate::stringFromColumnIndex($col_end + 1)) == 0) {
             return;
         }
         if (Xls::sizeRow($this->phpSheet, $row_start + 1) == 0) {
@@ -2447,9 +2331,9 @@ class Worksheet extends BIFFwriter
         }
 
         // Convert the pixel values to the percentage value expected by Excel
-        $x1 = $x1 / Xls::sizeCol($this->phpSheet, Cell::stringFromColumnIndex($col_start)) * 1024;
+        $x1 = $x1 / Xls::sizeCol($this->phpSheet, Coordinate::stringFromColumnIndex($col_start + 1)) * 1024;
         $y1 = $y1 / Xls::sizeRow($this->phpSheet, $row_start + 1) * 256;
-        $x2 = $width / Xls::sizeCol($this->phpSheet, Cell::stringFromColumnIndex($col_end)) * 1024; // Distance to right side of object
+        $x2 = $width / Xls::sizeCol($this->phpSheet, Coordinate::stringFromColumnIndex($col_end + 1)) * 1024; // Distance to right side of object
         $y2 = $height / Xls::sizeRow($this->phpSheet, $row_end + 1) * 256; // Distance to bottom of object
 
         $this->writeObjPicture($col_start, $x1, $row_start, $y1, $col_end, $x2, $row_end, $y2);
@@ -2774,8 +2658,6 @@ class Worksheet extends BIFFwriter
 
     /**
      * Store the DATAVALIDATIONS and DATAVALIDATION records.
-     *
-     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
      */
     private function writeDataValidity()
     {
@@ -4533,9 +4415,9 @@ class Worksheet extends BIFFwriter
                         $arrConditional[] = $conditional->getHashCode();
                     }
                     // Cells
-                    $arrCoord = Cell::coordinateFromString($cellCoordinate);
+                    $arrCoord = Coordinate::coordinateFromString($cellCoordinate);
                     if (!is_numeric($arrCoord[0])) {
-                        $arrCoord[0] = Cell::columnIndexFromString($arrCoord[0]);
+                        $arrCoord[0] = Coordinate::columnIndexFromString($arrCoord[0]);
                     }
                     if ($numColumnMin === null || ($numColumnMin > $arrCoord[0])) {
                         $numColumnMin = $arrCoord[0];

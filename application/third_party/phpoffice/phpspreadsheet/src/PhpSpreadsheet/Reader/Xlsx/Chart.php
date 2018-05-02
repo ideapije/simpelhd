@@ -9,7 +9,7 @@ use PhpOffice\PhpSpreadsheet\Chart\Layout;
 use PhpOffice\PhpSpreadsheet\Chart\Legend;
 use PhpOffice\PhpSpreadsheet\Chart\PlotArea;
 use PhpOffice\PhpSpreadsheet\Chart\Title;
-use PhpOffice\PhpSpreadsheet\RichText;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Style\Font;
 use SimpleXMLElement;
@@ -20,6 +20,8 @@ class Chart
      * @param SimpleXMLElement $component
      * @param string $name
      * @param string $format
+     *
+     * @return null|bool|float|int|string
      */
     private static function getAttribute(SimpleXMLElement $component, $name, $format)
     {
@@ -51,6 +53,8 @@ class Chart
     /**
      * @param SimpleXMLElement $chartElements
      * @param string $chartName
+     *
+     * @return \PhpOffice\PhpSpreadsheet\Chart\Chart
      */
     public static function readChart(SimpleXMLElement $chartElements, $chartName)
     {
@@ -210,7 +214,7 @@ class Chart
                     }
             }
         }
-        $chart = new \PhpOffice\PhpSpreadsheet\Chart($chartName, $title, $legend, $plotArea, $plotVisOnly, $dispBlanksAs, $XaxisLabel, $YaxisLabel);
+        $chart = new \PhpOffice\PhpSpreadsheet\Chart\Chart($chartName, $title, $legend, $plotArea, $plotVisOnly, $dispBlanksAs, $XaxisLabel, $YaxisLabel);
 
         return $chart;
     }

@@ -35,8 +35,60 @@ class OLERead
     const SIZE_POS = 0x78;
 
     public $wrkbook;
+
     public $summaryInformation;
+
     public $documentSummaryInformation;
+
+    /**
+     * @var int
+     */
+    private $numBigBlockDepotBlocks;
+
+    /**
+     * @var int
+     */
+    private $rootStartBlock;
+
+    /**
+     * @var int
+     */
+    private $sbdStartBlock;
+
+    /**
+     * @var int
+     */
+    private $extensionBlock;
+
+    /**
+     * @var int
+     */
+    private $numExtensionBlocks;
+
+    /**
+     * @var string
+     */
+    private $bigBlockChain;
+
+    /**
+     * @var string
+     */
+    private $smallBlockChain;
+
+    /**
+     * @var string
+     */
+    private $entry;
+
+    /**
+     * @var int
+     */
+    private $rootentry;
+
+    /**
+     * @var array
+     */
+    private $props = [];
 
     /**
      * Read the file.

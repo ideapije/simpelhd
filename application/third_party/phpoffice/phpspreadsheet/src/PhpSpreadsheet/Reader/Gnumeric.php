@@ -2,11 +2,11 @@
 
 namespace PhpOffice\PhpSpreadsheet\Reader;
 
-use DateTimeZone;
-use PhpOffice\PhpSpreadsheet\Cell;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\NamedRange;
 use PhpOffice\PhpSpreadsheet\ReferenceHelper;
-use PhpOffice\PhpSpreadsheet\RichText;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use PhpOffice\PhpSpreadsheet\Settings;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Shared\File;
@@ -18,15 +18,8 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Font;
 use XMLReader;
 
-class Gnumeric extends BaseReader implements IReader
+class Gnumeric extends BaseReader
 {
-    /**
-     * Formats.
-     *
-     * @var array
-     */
-    private $styles = [];
-
     /**
      * Shared Expressions.
      *
@@ -68,11 +61,7 @@ class Gnumeric extends BaseReader implements IReader
         $data = fread($fh, 2);
         fclose($fh);
 
-        if ($data != chr(0x1F) . chr(0x8B)) {
-            return false;
-        }
-
-        return true;
+        return $data == chr(0x1F) . chr(0x8B);
     }
 
     /**
@@ -80,7 +69,7 @@ class Gnumeric extends BaseReader implements IReader
      *
      * @param string $pFilename
      *
-     * @throws Exception
+     * @return array
      */
     public function listWorksheetNames($pFilename)
     {
@@ -109,7 +98,7 @@ class Gnumeric extends BaseReader implements IReader
      *
      * @param string $pFilename
      *
-     * @throws Exception
+     * @return array
      */
     public function listWorksheetInfo($pFilename)
     {
@@ -145,7 +134,7 @@ class Gnumeric extends BaseReader implements IReader
                         break;
                     }
                 }
-                $tmpInfo['lastColumnLetter'] = Cell::stringFromColumnIndex($tmpInfo['lastColumnIndex']);
+                $tmpInfo['lastColumnLetter'] = Coordinate::stringFromColumnIndex($tmpInfo['lastColumnIndex'] + 1);
                 $worksheetInfo[] = $tmpInfo;
             }
         }
@@ -155,12 +144,14 @@ class Gnumeric extends BaseReader implements IReader
 
     /**
      * @param string $filename
+     *
+     * @return string
      */
     private function gzfileGetContents($filename)
     {
         $file = @gzopen($filename, 'rb');
+        $data = '';
         if ($file !== false) {
-            $data = '';
             while (!gzeof($file)) {
                 $data .= gzread($file, 1024);
             }
@@ -201,9 +192,6 @@ class Gnumeric extends BaseReader implements IReader
     public function loadIntoExisting($pFilename, Spreadsheet $spreadsheet)
     {
         File::assertFile($pFilename);
-
-        $timezoneObj = new DateTimeZone('Europe/London');
-        $GMT = new DateTimeZone('UTC');
 
         $gFileData = $this->gzfileGetContents($pFilename);
 
@@ -404,7 +392,7 @@ class Gnumeric extends BaseReader implements IReader
                     $maxCol = $column;
                 }
 
-                $column = Cell::stringFromColumnIndex($column);
+                $column = Coordinate::stringFromColumnIndex($column + 1);
 
                 // Read cell?
                 if ($this->getReadFilter() !== null) {
@@ -415,7 +403,7 @@ class Gnumeric extends BaseReader implements IReader
 
                 $ValueType = $cellAttributes->ValueType;
                 $ExprID = (string) $cellAttributes->ExprID;
-                $type = Cell\DataType::TYPE_FORMULA;
+                $type = DataType::TYPE_FORMULA;
                 if ($ExprID > '') {
                     if (((string) $cell) > '') {
                         $this->expressions[$ExprID] = [
@@ -434,15 +422,15 @@ class Gnumeric extends BaseReader implements IReader
                             $worksheetName
                         );
                     }
-                    $type = Cell\DataType::TYPE_FORMULA;
+                    $type = DataType::TYPE_FORMULA;
                 } else {
                     switch ($ValueType) {
                         case '10':        //    NULL
-                            $type = Cell\DataType::TYPE_NULL;
+                            $type = DataType::TYPE_NULL;
 
                             break;
                         case '20':        //    Boolean
-                            $type = Cell\DataType::TYPE_BOOL;
+                            $type = DataType::TYPE_BOOL;
                             $cell = ($cell == 'TRUE') ? true : false;
 
                             break;
@@ -451,15 +439,15 @@ class Gnumeric extends BaseReader implements IReader
                             // Excel 2007+ doesn't differentiate between integer and float, so set the value and dropthru to the next (numeric) case
                             // no break
                         case '40':        //    Float
-                            $type = Cell\DataType::TYPE_NUMERIC;
+                            $type = DataType::TYPE_NUMERIC;
 
                             break;
                         case '50':        //    Error
-                            $type = Cell\DataType::TYPE_ERROR;
+                            $type = DataType::TYPE_ERROR;
 
                             break;
                         case '60':        //    String
-                            $type = Cell\DataType::TYPE_STRING;
+                            $type = DataType::TYPE_STRING;
 
                             break;
                         case '70':        //    Cell Range
@@ -482,11 +470,11 @@ class Gnumeric extends BaseReader implements IReader
                 $styleAttributes = $styleRegion->attributes();
                 if (($styleAttributes['startRow'] <= $maxRow) &&
                     ($styleAttributes['startCol'] <= $maxCol)) {
-                    $startColumn = Cell::stringFromColumnIndex((int) $styleAttributes['startCol']);
+                    $startColumn = Coordinate::stringFromColumnIndex((int) $styleAttributes['startCol'] + 1);
                     $startRow = $styleAttributes['startRow'] + 1;
 
                     $endColumn = ($styleAttributes['endCol'] > $maxCol) ? $maxCol : (int) $styleAttributes['endCol'];
-                    $endColumn = Cell::stringFromColumnIndex($endColumn);
+                    $endColumn = Coordinate::stringFromColumnIndex($endColumn + 1);
                     $endRow = ($styleAttributes['endRow'] > $maxRow) ? $maxRow : $styleAttributes['endRow'];
                     $endRow += 1;
                     $cellRange = $startColumn . $startRow . ':' . $endColumn . $endRow;
@@ -728,19 +716,19 @@ class Gnumeric extends BaseReader implements IReader
                     $hidden = ((isset($columnAttributes['Hidden'])) && ($columnAttributes['Hidden'] == '1')) ? true : false;
                     $columnCount = (isset($columnAttributes['Count'])) ? $columnAttributes['Count'] : 1;
                     while ($c < $column) {
-                        $spreadsheet->getActiveSheet()->getColumnDimension(Cell::stringFromColumnIndex($c))->setWidth($defaultWidth);
+                        $spreadsheet->getActiveSheet()->getColumnDimension(Coordinate::stringFromColumnIndex($c + 1))->setWidth($defaultWidth);
                         ++$c;
                     }
                     while (($c < ($column + $columnCount)) && ($c <= $maxCol)) {
-                        $spreadsheet->getActiveSheet()->getColumnDimension(Cell::stringFromColumnIndex($c))->setWidth($columnWidth);
+                        $spreadsheet->getActiveSheet()->getColumnDimension(Coordinate::stringFromColumnIndex($c + 1))->setWidth($columnWidth);
                         if ($hidden) {
-                            $spreadsheet->getActiveSheet()->getColumnDimension(Cell::stringFromColumnIndex($c))->setVisible(false);
+                            $spreadsheet->getActiveSheet()->getColumnDimension(Coordinate::stringFromColumnIndex($c + 1))->setVisible(false);
                         }
                         ++$c;
                     }
                 }
                 while ($c <= $maxCol) {
-                    $spreadsheet->getActiveSheet()->getColumnDimension(Cell::stringFromColumnIndex($c))->setWidth($defaultWidth);
+                    $spreadsheet->getActiveSheet()->getColumnDimension(Coordinate::stringFromColumnIndex($c + 1))->setWidth($defaultWidth);
                     ++$c;
                 }
             }

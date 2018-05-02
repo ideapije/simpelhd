@@ -2,7 +2,7 @@
 
 namespace PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-use PhpOffice\PhpSpreadsheet\Cell;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Comment;
 use PhpOffice\PhpSpreadsheet\Shared\XMLWriter;
 
@@ -11,13 +11,13 @@ class Comments extends WriterPart
     /**
      * Write comments to XML format.
      *
-     * @param \PhpOffice\PhpSpreadsheet\Worksheet $pWorksheet
+     * @param \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $pWorksheet
      *
      * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
      *
      * @return string XML Output
      */
-    public function writeComments(\PhpOffice\PhpSpreadsheet\Worksheet $pWorksheet)
+    public function writeComments(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $pWorksheet)
     {
         // Create XML writer
         $objWriter = null;
@@ -94,13 +94,13 @@ class Comments extends WriterPart
     /**
      * Write VML comments to XML format.
      *
-     * @param \PhpOffice\PhpSpreadsheet\Worksheet $pWorksheet
+     * @param \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $pWorksheet
      *
      * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
      *
      * @return string XML Output
      */
-    public function writeVMLComments(\PhpOffice\PhpSpreadsheet\Worksheet $pWorksheet)
+    public function writeVMLComments(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $pWorksheet)
     {
         // Create XML writer
         $objWriter = null;
@@ -171,14 +171,12 @@ class Comments extends WriterPart
      * @param XMLWriter $objWriter XML Writer
      * @param string $pCellReference Cell reference, eg: 'A1'
      * @param Comment $pComment Comment
-     *
-     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
      */
     private function writeVMLComment(XMLWriter $objWriter, $pCellReference, Comment $pComment)
     {
         // Metadata
-        list($column, $row) = Cell::coordinateFromString($pCellReference);
-        $column = Cell::columnIndexFromString($column);
+        list($column, $row) = Coordinate::coordinateFromString($pCellReference);
+        $column = Coordinate::columnIndexFromString($column);
         $id = 1024 + $column + $row;
         $id = substr($id, 0, 4);
 

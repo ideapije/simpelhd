@@ -3,9 +3,8 @@
 namespace PhpOffice\PhpSpreadsheet\Style;
 
 use PhpOffice\PhpSpreadsheet\Exception as PhpSpreadsheetException;
-use PhpOffice\PhpSpreadsheet\IComparable;
 
-class Border extends Supervisor implements IComparable
+class Border extends Supervisor
 {
     // Border style
     const BORDER_NONE = 'none';
@@ -38,11 +37,9 @@ class Border extends Supervisor implements IComparable
     protected $color;
 
     /**
-     * Parent property name.
-     *
-     * @var string
+     * @var int
      */
-    protected $parentPropertyName;
+    public $colorIndex;
 
     /**
      * Create a new Border.
@@ -69,22 +66,6 @@ class Border extends Supervisor implements IComparable
     }
 
     /**
-     * Bind parent. Only used for supervisor.
-     *
-     * @param Borders $parent
-     * @param string $parentPropertyName
-     *
-     * @return Border
-     */
-    public function bindParent($parent, $parentPropertyName = null)
-    {
-        $this->parent = $parent;
-        $this->parentPropertyName = $parentPropertyName;
-
-        return $this;
-    }
-
-    /**
      * Get the shared style component for the currently active cell in currently active sheet.
      * Only used for style supervisor.
      *
@@ -101,6 +82,7 @@ class Border extends Supervisor implements IComparable
             case 'outline':
             case 'vertical':
                 throw new PhpSpreadsheetException('Cannot get shared component for a pseudo-border.');
+
                 break;
             case 'bottom':
                 return $this->parent->getSharedComponent()->getBottom();
@@ -132,12 +114,12 @@ class Border extends Supervisor implements IComparable
      *
      * <code>
      * $spreadsheet->getActiveSheet()->getStyle('B2')->getBorders()->getTop()->applyFromArray(
-     *        array(
+     *        [
      *            'borderStyle' => Border::BORDER_DASHDOT,
-     *            'color' => array(
+     *            'color' => [
      *                'rgb' => '808080'
-     *            )
-     *        )
+     *            ]
+     *        ]
      * );
      * </code>
      *
