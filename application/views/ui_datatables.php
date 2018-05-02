@@ -153,7 +153,65 @@
 			<?php if(isset($sources)) : ?>
 
 <!--<div class="table-responsive">-->
-	
+	<?php /*?>
+					<option value="1" <?php if ($goldar == 1 ) echo 'selected' ; ?>>A</option>
+					<option value="2" <?php if ($goldar == 2 ) echo 'selected' ; ?>>B</option>
+					<option value="3" <?php if ($goldar == 3 ) echo 'selected' ; ?>>AB</option>
+					<option value="4" <?php if ($goldar == 4 ) echo 'selected' ; ?>>O</option>
+					<option value="5" <?php if ($goldar == 5 ) echo 'selected' ; ?>>A+</option>
+					<option value="6" <?php if ($goldar == 6 ) echo 'selected' ; ?>>A-</option>
+					<option value="7" <?php if ($goldar == 7 ) echo 'selected' ; ?>>B+</option>
+					<option value="8" <?php if ($goldar == 8 ) echo 'selected' ; ?>>B-</option>
+					<option value="9" <?php if ($goldar == 9 ) echo 'selected' ; ?>>AB+</option>
+					<option value="10" <?php if ($goldar == 10 ) echo 'selected' ; ?>>AB-</option>
+					<option value="11" <?php if ($goldar == 11 ) echo 'selected' ; ?>>O+</option>
+					<option value="12" <?php if ($goldar == 12 ) echo 'selected' ; ?>>O-</option>
+					<option value="13" <?php if ($goldar == 13 ) echo 'selected' ; ?>>Tidak Tahu</option>
+					*/?>
+
+<?php //printr(current_url());
+$callers=debug_backtrace();
+// printr($callers[1]['function']);
+$method = $this->uri->segment(2); // n=1 for controller, n=2 for method, etc
+$table_name = $this->uri->segment(3); // n=1 for controller, n=2 for method, etc
+// printr($method." ".$table_name);
+if ($method=='daftar'&&$table_name=='person') {
+	$list_option['goldar']=[
+		["value"=>1,"name"=>"A"],
+		["value"=>2,"name"=>"B"],
+		["value"=>3,"name"=>"AB"],
+		["value"=>4,"name"=>"O"],
+		["value"=>5,"name"=>"A+"],
+		["value"=>6,"name"=>"A-"],
+		["value"=>7,"name"=>"B+"],
+		["value"=>8,"name"=>"AB+"],
+		["value"=>9,"name"=>"AB-"],
+		["value"=>10,"name"=>"O+"],
+		["value"=>11,"name"=>"O-"],
+		["value"=>12,"name"=>"Tidak Tahu"],
+	];
+	$list_option['jenis_kelamin']=[
+		["value"=>1,"name"=>"Laki-laki"],
+		["value"=>2,"name"=>"Perempuan"],
+	];
+	$list_option['agama']=[
+		["value"=>1,"name"=>"Islam"],
+		["value"=>2,"name"=>"Kristen"],
+		["value"=>3,"name"=>"Katholik"],
+		["value"=>4,"name"=>"Hindu"],
+		["value"=>5,"name"=>"Budha"],
+		["value"=>6,"name"=>"Kong Hucu"],
+		["value"=>7,"name"=>"Kepercayaan Terhadap Tuhan YME"],
+	];
+	// printr($goldar);
+	// printr($goldar);
+
+  // [jenis_kelamin] => 1
+  // [goldar] => 2
+  // [agama] => 1
+}
+
+?>
 	<table class="table table-hover" id="gl-table" >
   	<thead>
 	  		<?php
@@ -188,7 +246,6 @@
 					echo '<tr>';
 					echo '<th>'.$i++.'.</th>';
 		 			foreach ($columns as $k => $field) {
-		 				
 		 				if (isset($show) && in_array($field, $show)) {
 		 					echo '<td>';
 		 					
@@ -198,6 +255,21 @@
 		 					if (strpos($field,'harga_') !== false && $len > 0) {
 		 						$data = show_currency_format($data);
 		 					}
+
+							if ($method=='daftar'&&$table_name=='person') {
+			 					if(array_key_exists($field,$list_option)){
+			 						foreach ($list_option[$field] as $rowx) {
+			 							if ($rowx['value']==$data) {
+			 								$data=$rowx['name'];
+			 								break;
+			 							}
+			 						}
+			 					}
+			 				}elseif($method=='daftar'&&$table_name=='users'){
+			 					if ($field=='last_login') {
+			 						$data=date("Y-m-d H:i:s", $data);
+			 					}
+			 				}
 		 					echo (isset($data))? $data : '';
 		 					echo  '</td>';
 		 				}elseif (!isset($show)) {
